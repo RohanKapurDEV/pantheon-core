@@ -8,4 +8,8 @@ pub enum AutoDcaError {
     InvalidCrankAuthority,
     #[msg("Invalid pending authority")]
     InvalidPendingAuthority,
+    #[msg("From and To token mints cannot be the same")]
+    TokenMintsCannotBeTheSame,
+    #[msg("Incorrect token mint supplied")]
+    IncorrectMint,
 }
