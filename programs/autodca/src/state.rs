@@ -9,7 +9,7 @@ pub struct CrankAuthority {
 }
 
 impl CrankAuthority {
-    pub const SIZE: usize = 8 + (32 * 3);
+    pub const SIZE: usize = 2 + (32 * 3);
 }
 
 /// Total amount delegated = amount_per_interval * max_intervals
@@ -25,14 +25,14 @@ pub struct DcaMetadata {
     pub to_token_mint: Pubkey,
     pub owner_from_token_account: Pubkey,
     pub owner_to_token_account: Pubkey,
-    pub contract_from_token_account: Pubkey,
-    pub contract_to_token_account: Pubkey,
+    pub vault_from_token_account: Pubkey,
+    pub vault_to_token_account: Pubkey,
     pub amount_per_interval: u64,
     pub interval_length: u64,  // In seconds, duration between intervals
     pub interval_counter: u16, // Current interval index
     pub max_intervals: u16,    // Total amount of intervals
     pub crank_authority: Pubkey,
-    pub created_at: i64,
+    pub created_at: u64,
 }
 
 impl DcaMetadata {
