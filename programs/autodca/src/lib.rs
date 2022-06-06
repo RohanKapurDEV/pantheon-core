@@ -5,10 +5,7 @@ mod instructions;
 mod state;
 mod utils;
 
-use error::*;
 use instructions::*;
-use state::*;
-use utils::*;
 
 declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
@@ -39,11 +36,27 @@ pub mod autodca {
         instructions::set_crank_fee_bps::handler(ctx, fee_bps)
     }
 
-    pub fn initialize_dca_metadata(ctx: Context<InitializeDcaMetadata>) -> Result<()> {
-        todo!()
+    pub fn initialize_dca_metadata(
+        ctx: Context<InitializeDcaMetadata>,
+        amount_per_interval: u64,
+        interval_length: u64,
+        interval_counter: u16,
+        max_intervals: u16,
+    ) -> Result<()> {
+        instructions::initialize_dca_metadata::handler(
+            ctx,
+            amount_per_interval,
+            interval_length,
+            interval_counter,
+            max_intervals,
+        )
     }
 
     pub fn trigger_dca_payment(ctx: Context<TriggerDcaPayment>) -> Result<()> {
+        todo!()
+    }
+
+    pub fn withdraw_token_from_metadata(ctx: Context<WithdrawTokenFromMetadata>) -> Result<()> {
         todo!()
     }
 
