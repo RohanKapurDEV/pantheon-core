@@ -4,7 +4,7 @@ use crate::utils::get_timestamp;
 use anchor_lang::prelude::*;
 use anchor_spl::{
     associated_token::AssociatedToken,
-    token::{Mint, Token, TokenAccount},
+    token::{transfer, Mint, Token, TokenAccount, Transfer},
 };
 
 /// Word of caution:
@@ -90,6 +90,22 @@ pub fn handler(
     max_intervals: u16,
 ) -> Result<()> {
     let timestamp = get_timestamp();
+
+    // Transfer from_token from user token account to vault token account
+    let transfer_accounts = Transfer {
+        from: ctx.accounts.from_mint_user_token_account.to_account_info(),
+        to: ctx.accounts.from_mint_vault_token_account.to_account_info(),
+        authority: ctx.accounts.payer.to_account_info(),
+    };
+
+    let cpi_ctx = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        transfer_accounts,
+    );
+
+    let total_amount = amount_per_interval * max_intervals as u64;
+
+    transfer(cpi_ctx, total_amount)?;
 
     let dca_metadata = &mut ctx.accounts.dca_metadata;
 
