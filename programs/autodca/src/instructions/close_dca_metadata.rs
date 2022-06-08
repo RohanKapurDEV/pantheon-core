@@ -17,6 +17,6 @@ pub struct CloseDcaMetadata<'info> {
     pub dca_metadata: Account<'info, DcaMetadata>,
 }
 
-pub fn handler(ctx: Context<CloseDcaMetadata>) -> Result<()> {
+pub fn handler(_ctx: Context<CloseDcaMetadata>) -> Result<()> {
     Ok(())
 }
