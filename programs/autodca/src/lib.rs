@@ -56,8 +56,12 @@ pub mod autodca {
         instructions::trigger_dca_payment::handler(ctx)
     }
 
-    pub fn withdraw_token_from_metadata(ctx: Context<WithdrawTokenFromMetadata>) -> Result<()> {
-        todo!()
+    pub fn withdraw_token_from_metadata(
+        ctx: Context<WithdrawTokenFromMetadata>,
+        from_token: bool,
+        amount: u64,
+    ) -> Result<()> {
+        instructions::withdraw_token_from_metadata::handler(ctx, from_token, amount)
     }
 
     pub fn close_dca_metadata(ctx: Context<CloseDcaMetadata>) -> Result<()> {
