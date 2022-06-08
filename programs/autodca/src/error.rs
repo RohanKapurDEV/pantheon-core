@@ -22,4 +22,10 @@ pub enum AutoDcaError {
     DcaScheduleInViolation,
     #[msg("Only the owner of the account can call the close instruction")]
     IncorrectOwner,
+    #[msg("Incorrect from mint token account")]
+    IncorrectFromMintTokenAccount,
+    #[msg("Incorrect to mint token account")]
+    IncorrectToMintTokenAccount,
+    #[msg("Insufficient baalnce in selected token account")]
+    InsufficientBalanceInSelectedTokenAccount,
 }
