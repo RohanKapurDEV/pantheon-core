@@ -53,7 +53,7 @@ pub mod autodca {
     }
 
     pub fn trigger_dca_payment(ctx: Context<TriggerDcaPayment>) -> Result<()> {
-        todo!()
+        instructions::trigger_dca_payment::handler(ctx)
     }
 
     pub fn withdraw_token_from_metadata(ctx: Context<WithdrawTokenFromMetadata>) -> Result<()> {
