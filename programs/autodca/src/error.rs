@@ -20,4 +20,6 @@ pub enum AutoDcaError {
     CurrentIntervalOutOfBounds,
     #[msg("The payment schedule initially set by the owner is being violated")]
     DcaScheduleInViolation,
+    #[msg("Only the owner of the account can call the close instruction")]
+    IncorrectOwner,
 }
