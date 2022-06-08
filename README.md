@@ -6,7 +6,7 @@ Pantheon is an experimental protocol on Solana for vaults that automate common t
 
 - `autodca` - Automated dollar cost averaging vaults, powered by [Jupiter Exchange](https://www.jup.ag) for best-in-class price execution
 
-## Programs
+## Offchain Programs
 
 - `autodca-accounts` - An API for indexing the necessary data for the iterator (crank) to process DCA schedules in due time
 - `iterator-crank` - TBD
