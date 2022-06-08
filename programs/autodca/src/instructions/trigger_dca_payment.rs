@@ -76,7 +76,7 @@ pub fn handler(ctx: Context<TriggerDcaPayment>) -> Result<()> {
             .accounts
             .from_mint_crank_authority_token_account
             .to_account_info(),
-        authority: ctx.accounts.dca_metadata.to_account_info(),
+        authority: dca_metadata.clone().to_account_info(),
     };
 
     let cpi_ctx = CpiContext::new(
@@ -85,6 +85,8 @@ pub fn handler(ctx: Context<TriggerDcaPayment>) -> Result<()> {
     );
 
     transfer(cpi_ctx, amount_per_interval)?;
+
+    dca_metadata.interval_counter = new_current_interval;
 
     Ok(())
 }
