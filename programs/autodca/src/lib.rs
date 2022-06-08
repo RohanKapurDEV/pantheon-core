@@ -61,11 +61,6 @@ pub mod autodca {
     }
 
     pub fn close_dca_metadata(ctx: Context<CloseDcaMetadata>) -> Result<()> {
-        todo!()
+        instructions::close_dca_metadata::handler(ctx)
     }
-}
-
-#[derive(Accounts)]
-pub struct CloseDcaMetadata<'info> {
-    pub payer: Signer<'info>,
 }

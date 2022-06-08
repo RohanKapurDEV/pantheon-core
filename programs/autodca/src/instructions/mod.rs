@@ -1,4 +1,5 @@
 pub mod accept_crank_authority;
+pub mod close_dca_metadata;
 pub mod initialize_crank_authority;
 pub mod initialize_dca_metadata;
 pub mod set_crank_fee_bps;
@@ -8,6 +9,7 @@ pub mod trigger_dca_payment;
 pub mod withdraw_token_from_metadata;
 
 pub use accept_crank_authority::*;
+pub use close_dca_metadata::*;
 pub use initialize_crank_authority::*;
 pub use initialize_dca_metadata::*;
 pub use set_crank_fee_bps::*;
