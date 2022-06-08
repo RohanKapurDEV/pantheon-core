@@ -12,4 +12,12 @@ pub enum AutoDcaError {
     TokenMintsCannotBeTheSame,
     #[msg("Incorrect token mint supplied")]
     IncorrectMint,
+    #[msg("Instruction not signed by current crank authority")]
+    CurrentCrankAuthorityNotSigner,
+    #[msg("The current crank authority does not own the token account")]
+    CurrentCrankDoesNotOwnTokenAccount,
+    #[msg("The current interval is higher than the max set by the user")]
+    CurrentIntervalOutOfBounds,
+    #[msg("The payment schedule initially set by the owner is being violated")]
+    DcaScheduleInViolation,
 }
