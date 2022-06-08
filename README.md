@@ -1,6 +1,6 @@
 # Pantheon Core
 
-Pantheon is a Solana protocol for vaults that automate trading flows onchain.
+Pantheon is an experimental protocol on Solana for vaults that automate common trading patterns. The only vault currently present is the AutoDCA vault, more will follow eventually.
 
 ## Programs
 
