@@ -28,7 +28,8 @@ pub struct TriggerDcaPayment<'info> {
     pub from_mint_crank_authority_token_account: Account<'info, TokenAccount>,
 
     #[account(
-        constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
+        constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint,
+        constraint = from_mint_vault_token_account.key() == dca_metadata.vault_from_token_account @ AutoDcaError::IncorrectFromMintTokenAccount
     )]
     pub from_mint_vault_token_account: Account<'info, TokenAccount>,
 
