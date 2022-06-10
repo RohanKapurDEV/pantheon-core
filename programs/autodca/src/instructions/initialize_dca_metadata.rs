@@ -28,11 +28,11 @@ pub struct InitializeDcaMetadata<'info> {
     )]
     pub dca_metadata: Account<'info, DcaMetadata>,
 
-    pub from_mint: Account<'info, Mint>,
+    pub from_mint: Box<Account<'info, Mint>>,
 
-    pub to_mint: Account<'info, Mint>,
+    pub to_mint: Box<Account<'info, Mint>>,
 
-    pub from_mint_user_token_account: Account<'info, TokenAccount>, // safe to assume this exists, no need to init
+    pub from_mint_user_token_account: Box<Account<'info, TokenAccount>>, // safe to assume this exists, no need to init
 
     #[account(
         init_if_needed,
@@ -41,7 +41,7 @@ pub struct InitializeDcaMetadata<'info> {
         associated_token::authority = payer,
         constraint = to_mint_user_token_account.mint == to_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub to_mint_user_token_account: Account<'info, TokenAccount>,
+    pub to_mint_user_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         init_if_needed,
@@ -52,7 +52,7 @@ pub struct InitializeDcaMetadata<'info> {
         bump,
         constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub from_mint_vault_token_account: Account<'info, TokenAccount>,
+    pub from_mint_vault_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         init_if_needed,
@@ -63,7 +63,7 @@ pub struct InitializeDcaMetadata<'info> {
         bump,
         constraint = to_mint_vault_token_account.mint == to_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub to_mint_vault_token_account: Account<'info, TokenAccount>,
+    pub to_mint_vault_token_account: Box<Account<'info, TokenAccount>>,
 
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,

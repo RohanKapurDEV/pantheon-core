@@ -21,35 +21,35 @@ pub struct WithdrawTokenFromMetadata<'info> {
         constraint = from_mint_user_token_account.key() == dca_metadata.owner_from_token_account @ AutoDcaError::IncorrectFromMintTokenAccount,
         constraint = from_mint_user_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub from_mint_user_token_account: Account<'info, TokenAccount>,
+    pub from_mint_user_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         constraint = to_mint_user_token_account.key() == dca_metadata.owner_to_token_account @ AutoDcaError::IncorrectToMintTokenAccount,
         constraint = to_mint_user_token_account.mint == to_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub to_mint_user_token_account: Account<'info, TokenAccount>,
+    pub to_mint_user_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         constraint = from_mint_vault_token_account.key() == dca_metadata.vault_from_token_account @ AutoDcaError::IncorrectFromMintTokenAccount,
         constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub from_mint_vault_token_account: Account<'info, TokenAccount>,
+    pub from_mint_vault_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         constraint = to_mint_vault_token_account.key() == dca_metadata.vault_to_token_account @ AutoDcaError::IncorrectToMintTokenAccount,
         constraint = to_mint_vault_token_account.mint == to_mint.key() @ AutoDcaError::IncorrectMint
     )]
-    pub to_mint_vault_token_account: Account<'info, TokenAccount>,
+    pub to_mint_vault_token_account: Box<Account<'info, TokenAccount>>,
 
     #[account(
         constraint = from_mint.key() == dca_metadata.from_token_mint @ AutoDcaError::IncorrectMint
     )]
-    pub from_mint: Account<'info, Mint>,
+    pub from_mint: Box<Account<'info, Mint>>,
 
     #[account(
         constraint = to_mint.key() == dca_metadata.to_token_mint @ AutoDcaError::IncorrectMint
     )]
-    pub to_mint: Account<'info, Mint>,
+    pub to_mint: Box<Account<'info, Mint>>,
 
     pub token_program: Program<'info, Token>,
 }
