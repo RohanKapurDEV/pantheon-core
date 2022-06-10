@@ -1,6 +1,6 @@
 # Pantheon Core
 
-Pantheon is a protocol on Solana for vaults that automate common trading patterns, onchain. The only vault currently present is the AutoDCA vault, more will follow eventually.
+Pantheon is a protocol on Solana for vaults that automate common trading patterns, onchain. The only vault currently present is the AutoDCA vault, more will follow eventually. Nothing has been professionally audited, please use at your own risk.
 
 ## Smart Contracts
 
@@ -20,9 +20,6 @@ npm install && anchor build
 
 # Running tests
 anchor test
-
-# Build programs
-anchor build
 ```
 
 ## On trustlessness in code
