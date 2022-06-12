@@ -26,6 +26,8 @@ pub enum AutoDcaError {
     IncorrectFromMintTokenAccount,
     #[msg("Incorrect to mint token account")]
     IncorrectToMintTokenAccount,
-    #[msg("Insufficient baalnce in selected token account")]
+    #[msg("Insufficient balance in selected token account")]
     InsufficientBalanceInSelectedTokenAccount,
+    #[msg("Insufficient funding balance in token account")]
+    InsufficientFundingBalanceInTokenAccount,
 }
