@@ -7,8 +7,11 @@ import {
   mintToChecked,
   createAccount,
 } from "@solana/spl-token";
+import { ASSOCIATED_PROGRAM_ID } from "@project-serum/anchor/dist/cjs/utils/token";
+import { SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
+import BN from "bn.js";
 
-describe("autodca", () => {
+describe("autodca", async () => {
   const provider = anchor.AnchorProvider.env();
 
   const program = anchor.workspace.Autodca as Program<Autodca>;
@@ -26,10 +29,10 @@ describe("autodca", () => {
   const currentAuthority = anchor.web3.Keypair.generate();
   const crankTreasury = anchor.web3.Keypair.generate();
 
-  // Initialize DCA Metadata accounts
+  // Initialize DCA Metadata accounts - rest instantiated inside instruction test
   const userPayer = anchor.web3.Keypair.generate();
-  let userToMintTokenAccount: anchor.web3.PublicKey;
   let userFromMintTokenAccount: anchor.web3.PublicKey;
+  const dcaMetadata = anchor.web3.Keypair.generate();
 
   // Param objects
   let initializeDcaMetadataParams = {
@@ -39,9 +42,19 @@ describe("autodca", () => {
   };
 
   before(async () => {
+    // Fund authorityPayer with 10 SOL
     await provider.connection.confirmTransaction(
       await provider.connection.requestAirdrop(
         authorityPayer.publicKey,
+        10_000_000_000
+      ), // 10 SOL
+      "confirmed"
+    );
+
+    // Fund userPayer with 10 SOL
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(
+        userPayer.publicKey,
         10_000_000_000
       ), // 10 SOL
       "confirmed"
@@ -67,15 +80,6 @@ describe("autodca", () => {
     );
     fromPaymentMint = fromMint;
 
-    // Create user token account - to
-    let userToMintTokenAccountPubkey = await createAccount(
-      provider.connection,
-      userPayer,
-      toPaymentMint,
-      userPayer.publicKey
-    );
-    userFromMintTokenAccount = userToMintTokenAccountPubkey;
-
     // Create user token account - from
     let userFromMintTokenAccountPubkey = await createAccount(
       provider.connection,
@@ -84,6 +88,17 @@ describe("autodca", () => {
       userPayer.publicKey
     );
     userFromMintTokenAccount = userFromMintTokenAccountPubkey;
+
+    // Mint fromMint tokens to user from token account
+    await mintToChecked(
+      provider.connection,
+      userPayer,
+      fromMint,
+      userFromMintTokenAccount,
+      authorityPayer,
+      10000000000,
+      mintDecimals
+    );
   });
 
   it("creates a CrankAuthority account!", async () => {
@@ -104,14 +119,51 @@ describe("autodca", () => {
   });
 
   it("creates a DCA metadata account!", async () => {
+    // User To mint ATA
+    let [userToMintTokenPublicKey] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [
+          userPayer.publicKey.toBuffer(),
+          TOKEN_PROGRAM_ID.toBuffer(),
+          toPaymentMint.toBuffer(),
+        ],
+        ASSOCIATED_PROGRAM_ID
+      );
+
+    let [vaultFromMintTokenPublicKey] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from("vault"), fromPaymentMint.toBuffer()],
+        program.programId
+      );
+
+    let [vaultToMintTokenPublicKey] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from("vault"), toPaymentMint.toBuffer()],
+        program.programId
+      );
+
     await program.methods
       .initializeDcaMetadata(
-        initializeDcaMetadataParams.amountPerInterval,
-        initializeDcaMetadataParams.intervalLength,
+        new BN(initializeDcaMetadataParams.amountPerInterval),
+        new BN(initializeDcaMetadataParams.intervalLength),
         initializeDcaMetadataParams.maxIntervals
       )
-      .accounts({})
-      .signers([])
+      .accounts({
+        payer: userPayer.publicKey,
+        crankAuthority: crankAuthority.publicKey,
+        dcaMetadata: dcaMetadata.publicKey,
+        fromMint: fromPaymentMint,
+        toMint: toPaymentMint,
+        fromMintUserTokenAccount: userFromMintTokenAccount,
+        toMintUserTokenAccount: userToMintTokenPublicKey,
+        fromMintVaultTokenAccount: vaultFromMintTokenPublicKey,
+        toMintVaultTokenAccount: vaultToMintTokenPublicKey,
+        systemProgram: SystemProgram.programId,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
+        rent: SYSVAR_RENT_PUBKEY,
+      })
+      .signers([userPayer, dcaMetadata])
       .rpc();
   });
 });
