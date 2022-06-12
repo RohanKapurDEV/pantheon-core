@@ -40,14 +40,12 @@ pub mod autodca {
         ctx: Context<InitializeDcaMetadata>,
         amount_per_interval: u64,
         interval_length: u64,
-        interval_counter: u16,
         max_intervals: u16,
     ) -> Result<()> {
         instructions::initialize_dca_metadata::handler(
             ctx,
             amount_per_interval,
             interval_length,
-            interval_counter,
             max_intervals,
         )
     }

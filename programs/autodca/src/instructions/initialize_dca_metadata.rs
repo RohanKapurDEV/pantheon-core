@@ -32,6 +32,7 @@ pub struct InitializeDcaMetadata<'info> {
 
     pub to_mint: Box<Account<'info, Mint>>,
 
+    #[account(constraint = from_mint_user_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint)]
     pub from_mint_user_token_account: Box<Account<'info, TokenAccount>>, // safe to assume this exists, no need to init
 
     #[account(
@@ -86,7 +87,6 @@ pub fn handler(
     ctx: Context<InitializeDcaMetadata>,
     amount_per_interval: u64,
     interval_length: u64,
-    interval_counter: u16,
     max_intervals: u16,
 ) -> Result<()> {
     let timestamp = get_timestamp();
@@ -118,7 +118,7 @@ pub fn handler(
     dca_metadata.vault_to_token_account = ctx.accounts.to_mint_vault_token_account.key();
     dca_metadata.amount_per_interval = amount_per_interval;
     dca_metadata.interval_length = interval_length;
-    dca_metadata.interval_counter = interval_counter;
+    dca_metadata.interval_counter = 0;
     dca_metadata.max_intervals = max_intervals;
     dca_metadata.crank_authority = ctx.accounts.crank_authority.key();
     dca_metadata.created_at = timestamp;
