@@ -211,7 +211,7 @@ describe("autodca", async () => {
     // console.log(dcaAccount.createdAt + dcaAccount.intervalLength);
     // console.log(Date.now());
 
-    await delay(9 * 1000).then(async () => {
+    await delay(intervalLength * 1000).then(async () => {
       await program.methods
         .triggerDcaPayment()
         .accounts({
