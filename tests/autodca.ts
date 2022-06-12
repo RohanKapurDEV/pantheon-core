@@ -10,6 +10,7 @@ import {
 import { ASSOCIATED_PROGRAM_ID } from "@project-serum/anchor/dist/cjs/utils/token";
 import { SystemProgram, SYSVAR_RENT_PUBKEY } from "@solana/web3.js";
 import BN from "bn.js";
+import { delay } from "./utils";
 
 describe("autodca", async () => {
   const provider = anchor.AnchorProvider.env();
@@ -34,12 +35,20 @@ describe("autodca", async () => {
   let userFromMintTokenAccount: anchor.web3.PublicKey;
   const dcaMetadata = anchor.web3.Keypair.generate();
 
+  // Trigger DCA Payment accounts
+  let currentAuthorityFromMintTokenAccount: anchor.web3.PublicKey;
+
   // Param objects
   let initializeDcaMetadataParams = {
     amountPerInterval: 100 * Math.pow(10, mintDecimals),
     intervalLength: intervalLength,
     maxIntervals: maxIntervals,
   };
+
+  let [programAsSigner] = await anchor.web3.PublicKey.findProgramAddress(
+    [Buffer.from("program"), Buffer.from("signer")],
+    program.programId
+  );
 
   before(async () => {
     // Fund authorityPayer with 10 SOL
@@ -55,6 +64,15 @@ describe("autodca", async () => {
     await provider.connection.confirmTransaction(
       await provider.connection.requestAirdrop(
         userPayer.publicKey,
+        10_000_000_000
+      ), // 10 SOL
+      "confirmed"
+    );
+
+    // Fund currentAuthority with 10 SOL
+    await provider.connection.confirmTransaction(
+      await provider.connection.requestAirdrop(
+        currentAuthority.publicKey,
         10_000_000_000
       ), // 10 SOL
       "confirmed"
@@ -99,6 +117,16 @@ describe("autodca", async () => {
       10000000000,
       mintDecimals
     );
+
+    // Create currentAuthority token account - from
+    let currentAuthorityFromMintTokenAccountPubkey = await createAccount(
+      provider.connection,
+      currentAuthority,
+      fromPaymentMint,
+      currentAuthority.publicKey
+    );
+    currentAuthorityFromMintTokenAccount =
+      currentAuthorityFromMintTokenAccountPubkey;
   });
 
   it("creates a CrankAuthority account!", async () => {
@@ -158,6 +186,7 @@ describe("autodca", async () => {
         toMintUserTokenAccount: userToMintTokenPublicKey,
         fromMintVaultTokenAccount: vaultFromMintTokenPublicKey,
         toMintVaultTokenAccount: vaultToMintTokenPublicKey,
+        programAsSigner: programAsSigner,
         systemProgram: SystemProgram.programId,
         tokenProgram: TOKEN_PROGRAM_ID,
         associatedTokenProgram: ASSOCIATED_PROGRAM_ID,
@@ -165,5 +194,39 @@ describe("autodca", async () => {
       })
       .signers([userPayer, dcaMetadata])
       .rpc();
+  });
+
+  it("triggers a DCA payment", async () => {
+    let [vaultFromMintTokenPublicKey] =
+      await anchor.web3.PublicKey.findProgramAddress(
+        [Buffer.from("vault"), fromPaymentMint.toBuffer()],
+        program.programId
+      );
+
+    // let dcaAccount = await program.account.dcaMetadata.fetch(
+    //   dcaMetadata.publicKey
+    // );
+
+    // console.log(parseInt(dcaAccount.createdAt));
+    // console.log(dcaAccount.createdAt + dcaAccount.intervalLength);
+    // console.log(Date.now());
+
+    await delay(9 * 1000).then(async () => {
+      await program.methods
+        .triggerDcaPayment()
+        .accounts({
+          payer: currentAuthority.publicKey,
+          crankAuthority: crankAuthority.publicKey,
+          dcaMetadata: dcaMetadata.publicKey,
+          fromMintCrankAuthorityTokenAccount:
+            currentAuthorityFromMintTokenAccount,
+          fromMintVaultTokenAccount: vaultFromMintTokenPublicKey,
+          fromMint: fromPaymentMint,
+          programAsSigner: programAsSigner,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([currentAuthority])
+        .rpc();
+    });
   });
 });
