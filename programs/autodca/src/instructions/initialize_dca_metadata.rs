@@ -54,7 +54,7 @@ pub struct InitializeDcaMetadata<'info> {
         init_if_needed,
         payer = payer,
         token::mint = from_mint,
-        token::authority = dca_metadata,
+        token::authority = program_as_signer,
         seeds = [b"vault", from_mint.key().as_ref()],
         bump,
         constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
@@ -65,13 +65,16 @@ pub struct InitializeDcaMetadata<'info> {
         init_if_needed,
         payer = payer,
         token::mint = to_mint,
-        token::authority = dca_metadata,
+        token::authority = program_as_signer,
         seeds = [b"vault", to_mint.key().as_ref()],
         bump,
         constraint = to_mint_vault_token_account.mint == to_mint.key() @ AutoDcaError::IncorrectMint
     )]
     pub to_mint_vault_token_account: Box<Account<'info, TokenAccount>>,
 
+    /// CHECK: program signer PDA
+    #[account(seeds = [b"program", b"signer"], bump)]
+    pub program_as_signer: UncheckedAccount<'info>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
     pub associated_token_program: Program<'info, AssociatedToken>,

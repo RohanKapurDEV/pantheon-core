@@ -22,12 +22,16 @@ pub struct TriggerDcaPayment<'info> {
     pub dca_metadata: Account<'info, DcaMetadata>,
 
     #[account(
+        mut,
         constraint = from_mint_crank_authority_token_account.owner == payer.key() @ AutoDcaError::CurrentCrankDoesNotOwnTokenAccount,
-        constraint = from_mint_crank_authority_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
+        constraint = from_mint_crank_authority_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint,
     )]
     pub from_mint_crank_authority_token_account: Account<'info, TokenAccount>,
 
     #[account(
+        mut,
+        seeds = [b"vault", from_mint.key().as_ref()],
+        bump,
         constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint,
         constraint = from_mint_vault_token_account.key() == dca_metadata.vault_from_token_account @ AutoDcaError::IncorrectFromMintTokenAccount
     )]
@@ -38,6 +42,9 @@ pub struct TriggerDcaPayment<'info> {
     )]
     pub from_mint: Account<'info, Mint>,
 
+    /// CHECK: program signer PDA
+    #[account(seeds = [b"program", b"signer"], bump)]
+    pub program_as_signer: UncheckedAccount<'info>,
     pub token_program: Program<'info, Token>,
 }
 
@@ -53,8 +60,10 @@ pub fn handler(ctx: Context<TriggerDcaPayment>) -> Result<()> {
     let max_intervals: u16 = dca_metadata.max_intervals;
     let created_at: u64 = dca_metadata.created_at;
 
-    let new_current_interval = interval_counter + 1;
+    let new_current_interval = interval_counter.checked_add(1).unwrap();
     let current_timestamp = clock.unix_timestamp as u64;
+
+    let program_as_signer_bump = *ctx.bumps.get("program_as_signer").unwrap();
 
     // Do not let the interval surpass what was initially set into the account
     require!(
@@ -62,13 +71,27 @@ pub fn handler(ctx: Context<TriggerDcaPayment>) -> Result<()> {
         AutoDcaError::CurrentIntervalOutOfBounds
     );
 
-    let min_interval_timestamp = created_at + (new_current_interval as u64 * interval_length);
+    let min_interval_timestamp = created_at
+        .checked_add(
+            (new_current_interval as u64)
+                .checked_mul(interval_length)
+                .unwrap(),
+        )
+        .unwrap();
 
     // Make sure the payment schedule is not being preemptively triggered by the crank authority
     require!(
         current_timestamp >= min_interval_timestamp,
         AutoDcaError::DcaScheduleInViolation
     );
+
+    let seeds = &[
+        "program".as_bytes(),
+        "signer".as_bytes(),
+        &[program_as_signer_bump],
+    ];
+
+    let signer = &[&seeds[..]];
 
     // Handle transfer
     let transfer_accounts = Transfer {
@@ -77,12 +100,13 @@ pub fn handler(ctx: Context<TriggerDcaPayment>) -> Result<()> {
             .accounts
             .from_mint_crank_authority_token_account
             .to_account_info(),
-        authority: dca_metadata.clone().to_account_info(),
+        authority: ctx.accounts.program_as_signer.to_account_info(),
     };
 
-    let cpi_ctx = CpiContext::new(
+    let cpi_ctx = CpiContext::new_with_signer(
         ctx.accounts.token_program.to_account_info(),
         transfer_accounts,
+        signer,
     );
 
     transfer(cpi_ctx, amount_per_interval)?;
