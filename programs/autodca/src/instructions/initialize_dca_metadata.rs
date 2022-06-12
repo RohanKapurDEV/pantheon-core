@@ -15,6 +15,7 @@ use anchor_spl::{
 /// to know that and it won't throw any errors. At this point, every attempt to DCA using that mint will basically
 /// just fail. It is what it is, fellas.
 #[derive(Accounts)]
+#[instruction(amount_per_interval: u64, _interval_length: u64, max_intervals: u16)]
 pub struct InitializeDcaMetadata<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
@@ -32,7 +33,12 @@ pub struct InitializeDcaMetadata<'info> {
 
     pub to_mint: Box<Account<'info, Mint>>,
 
-    #[account(constraint = from_mint_user_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint)]
+    #[account(
+        mut,
+        constraint = from_mint_user_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint,
+        constraint = from_mint_user_token_account.amount >= amount_per_interval * max_intervals as u64 @ AutoDcaError::InsufficientFundingBalanceInTokenAccount,
+        constraint = from_mint_user_token_account.owner == payer.key() @ AutoDcaError::IncorrectOwner
+    )]
     pub from_mint_user_token_account: Box<Account<'info, TokenAccount>>, // safe to assume this exists, no need to init
 
     #[account(
@@ -49,7 +55,7 @@ pub struct InitializeDcaMetadata<'info> {
         payer = payer,
         token::mint = from_mint,
         token::authority = dca_metadata,
-        seeds = [b"vault", from_mint.key().as_ref(), payer.key().as_ref()],
+        seeds = [b"vault", from_mint.key().as_ref()],
         bump,
         constraint = from_mint_vault_token_account.mint == from_mint.key() @ AutoDcaError::IncorrectMint
     )]
@@ -60,7 +66,7 @@ pub struct InitializeDcaMetadata<'info> {
         payer = payer,
         token::mint = to_mint,
         token::authority = dca_metadata,
-        seeds = [b"vault", to_mint.key().as_ref(), payer.key().as_ref()],
+        seeds = [b"vault", to_mint.key().as_ref()],
         bump,
         constraint = to_mint_vault_token_account.mint == to_mint.key() @ AutoDcaError::IncorrectMint
     )]
