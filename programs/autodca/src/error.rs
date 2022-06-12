@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 #[error_code]
 pub enum AutoDcaError {
-    #[msg("Fee bps must be below 10000")]
+    #[msg("Fee bps must be equal to or below 10000")]
     InvalidFeeBpsParameter,
     #[msg("Invalid crank authority")]
     InvalidCrankAuthority,
