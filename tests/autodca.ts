@@ -211,7 +211,44 @@ describe("autodca", async () => {
     // console.log(dcaAccount.createdAt + dcaAccount.intervalLength);
     // console.log(Date.now());
 
-    await delay(intervalLength * 1000).then(async () => {
+    // plus one to intervalLength to offset decimal precision loss
+    await delay((intervalLength + 1) * 1000).then(async () => {
+      await program.methods
+        .triggerDcaPayment()
+        .accounts({
+          payer: currentAuthority.publicKey,
+          crankAuthority: crankAuthority.publicKey,
+          dcaMetadata: dcaMetadata.publicKey,
+          fromMintCrankAuthorityTokenAccount:
+            currentAuthorityFromMintTokenAccount,
+          fromMintVaultTokenAccount: vaultFromMintTokenPublicKey,
+          fromMint: fromPaymentMint,
+          programAsSigner: programAsSigner,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([currentAuthority])
+        .rpc();
+    });
+
+    await delay((intervalLength + 1) * 1000).then(async () => {
+      await program.methods
+        .triggerDcaPayment()
+        .accounts({
+          payer: currentAuthority.publicKey,
+          crankAuthority: crankAuthority.publicKey,
+          dcaMetadata: dcaMetadata.publicKey,
+          fromMintCrankAuthorityTokenAccount:
+            currentAuthorityFromMintTokenAccount,
+          fromMintVaultTokenAccount: vaultFromMintTokenPublicKey,
+          fromMint: fromPaymentMint,
+          programAsSigner: programAsSigner,
+          tokenProgram: TOKEN_PROGRAM_ID,
+        })
+        .signers([currentAuthority])
+        .rpc();
+    });
+
+    await delay((intervalLength + 1) * 1000).then(async () => {
       await program.methods
         .triggerDcaPayment()
         .accounts({
