@@ -8,13 +8,10 @@ Pantheon is a protocol on Solana for vaults that automate common trading pattern
 
 ## Offchain Programs
 
-- `autodca-accounts` - An API for indexing the necessary data for the iterator (crank) to process DCA schedules in due time
-- `iterator-crank` - Serverless functions that both iterate over dca schedules periodically and carry out the transactions as necessary
+- `lambda-sst` - Serverless functions that allow users to index DCA schedules into a MySQL database and automagically execute them when they're due
 - `autodca-client` - A CLI tool to invoke the autodca program instructions without having to manually write any code or clients
 
-For documentation on the `autodca-accounts` API, please refer to [API.md]()
-
-For documentation on the `iterator-crank` serverless functions, please refer to [CRANK.md]()
+For documentation on the `lambda-sst` serverless functions, please refer to [CRANK.md]()
 
 For documentation on the `autodca-client` tool, please refer to [CLI.md]()
 
