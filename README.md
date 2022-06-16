@@ -6,7 +6,7 @@ Pantheon is a protocol on Solana for vaults that automate common trading pattern
 
 ## Smart Contracts
 
-- `autodca` - Automated dollar cost averaging vaults, powered by [Jupiter Exchange](https://www.jup.ag) for best-in-class price execution
+- `autodca` - Automated dollar cost averaging vaults, powered by [Jupiter Exchange](https://www.jup.ag/infra) for best-in-class price execution
 
 ## Offchain Programs
 
