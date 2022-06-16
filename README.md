@@ -1,5 +1,7 @@
 # Pantheon Core
 
+This protocol is currently a WIP. Breaking changes are likely to occur
+
 Pantheon is a protocol on Solana for vaults that automate common trading patterns, onchain. The only vault currently present is the AutoDCA vault, more will follow eventually. Nothing has been professionally audited, please use at your own risk.
 
 ## Smart Contracts
@@ -11,9 +13,6 @@ Pantheon is a protocol on Solana for vaults that automate common trading pattern
 - `lambda-sst` - Serverless functions that allow users to index DCA schedules into a MySQL database and automagically execute them when they're due
 - `autodca-client` - A CLI tool to invoke the autodca program instructions without having to manually write any code or clients
 
-For documentation on the `lambda-sst` serverless functions, please refer to [CRANK.md]()
-
-For documentation on the `autodca-client` tool, please refer to [CLI.md]()
 
 ## Building and running tests
 
