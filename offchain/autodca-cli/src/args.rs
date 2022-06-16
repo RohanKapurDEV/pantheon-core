@@ -15,22 +15,19 @@ pub struct ClientArgs {
 #[derive(Debug, Subcommand)]
 pub enum EntityType {
     /// Initialize a CrankAuthority account
-    InitCrankAuthority(CrankAuthorityParams),
+    InitCrankAuthority(InitCrankAuthorityParams),
     /// Initialize a DcaMetadata account
     InitDcaMetadata(InitDcaMetadataParams),
 }
 
 #[derive(Debug, Args)]
-pub struct CrankAuthorityParams {
+pub struct InitCrankAuthorityParams {
     /// The path to the JSON keypair to use the sign the transaction
     #[clap(long)]
     pub keypair_path: String,
     /// Fee bps for the CrankAuthority account
     #[clap(long)]
     pub fee_bps: u16,
-    // Current authority for the CrankAuthority account
-    #[clap(long)]
-    pub current_authority: String,
     // Crank treasury account for the CrankAuthority account
     #[clap(long)]
     pub crank_treasury: String,
