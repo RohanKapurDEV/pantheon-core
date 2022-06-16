@@ -16,6 +16,10 @@ pub const DEVNET_RPC_WS: &str = "wss://api.devnet.solana.com";
 pub const MAINNET_RPC_HTTP: &str = "";
 pub const MAINNET_RPC_WS: &str = "";
 
+pub const CANNOT_READ_KEYPAIR: &str = "Unable to read keypair file";
+pub const INCORRECT_FORMAT_FOR_KEYPAIR: &str = "Incorrect format for keypair data";
+pub const INCORRECT_FORMAT_FOR_PUBKEY: &str = "Incorrect format for pubkey";
+
 pub fn build_client(keypair_path: String, network: String) -> Client {
     let network_selector = validate_network(network).unwrap();
     let rpc = network_selector.fetch_rpc();
