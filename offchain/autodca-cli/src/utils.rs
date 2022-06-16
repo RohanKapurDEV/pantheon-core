@@ -6,7 +6,7 @@ use anchor_client::{
 use std::fs;
 use std::rc::Rc;
 
-pub const PROGRAM_ID: &str = "4AWRyt6whM4M8C4rimokJxvDP6bts7NxWNxZuyFVKD31";
+pub const PROGRAM_ID: &str = "6dgkaNrtqjPbSzDTsDKErUV8JM45188MW756TVSDm2ZC";
 pub const TOKEN_PROGRAM: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 pub const ASSOCIATED_TOKEN_PROGRAM: &str = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 pub const RENT: &str = "SysvarRent111111111111111111111111111111111";
@@ -15,9 +15,6 @@ pub const DEVNET_RPC_HTTP: &str = "https://api.devnet.solana.com";
 pub const DEVNET_RPC_WS: &str = "wss://api.devnet.solana.com";
 pub const MAINNET_RPC_HTTP: &str = "";
 pub const MAINNET_RPC_WS: &str = "";
-
-pub const INCORRECT_AUTH_FOR_PAYMENT_CONFIG: &str =
-    "Incorrect authority keypair - does not match MerchantAccount.current_authority field";
 
 pub fn build_client(keypair_path: String, network: String) -> Client {
     let network_selector = validate_network(network).unwrap();
