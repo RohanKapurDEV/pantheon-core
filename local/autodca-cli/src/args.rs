@@ -28,7 +28,7 @@ pub struct InitCrankAuthorityParams {
     /// Fee bps for the CrankAuthority account
     #[clap(long)]
     pub fee_bps: u16,
-    // Crank treasury account for the CrankAuthority account
+    /// Crank treasury account for the CrankAuthority account
     #[clap(long)]
     pub crank_treasury: String,
     /// mainnet or devnet
