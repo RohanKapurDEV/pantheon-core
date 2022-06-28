@@ -42,10 +42,8 @@ pub async fn initialize_dca_metadata(
 
     // Check to see that from_mint is a valid mint account
     let from_mint_account = program.rpc().get_account(&from_mint)?;
-
     let data = from_mint_account.data.clone();
     let raw_bytes: &mut &[u8] = &mut &data[..];
-
     Mint::try_deserialize(raw_bytes).expect("from_mint is not a valid mint account. Try again");
 
     // Check to see that a token account for the for_mint exists and has sufficient balance to pay for the DCA
@@ -90,11 +88,11 @@ pub async fn initialize_dca_metadata(
         &associated_token_program,
     );
 
-    let from_mint_vault_keypair = Keypair::new();
-    let from_mint_vault_token_account = from_mint_vault_keypair.pubkey();
+    let (from_mint_vault_token_account_pubkey, _from_mint_vault_token_account_pubkey_bump) =
+        Pubkey::find_program_address(&[b"vault", &from_mint.to_bytes()], &program_id_pubkey);
 
-    let to_mint_vault_keypair = Keypair::new();
-    let to_mint_vault_token_account = to_mint_vault_keypair.pubkey();
+    let (to_mint_vault_token_account_pubkey, _to_mint_vault_token_account_pubkey_bump) =
+        Pubkey::find_program_address(&[b"vault", &to_mint.to_bytes()], &program_id_pubkey);
 
     // Run instruction
     let accounts = autodca_accounts::InitializeDcaMetadata {
@@ -104,8 +102,8 @@ pub async fn initialize_dca_metadata(
         from_mint: from_mint,
         to_mint: to_mint,
         from_mint_user_token_account: from_mint_ata_pubkey,
-        from_mint_vault_token_account: from_mint_vault_token_account,
-        to_mint_vault_token_account: to_mint_vault_token_account,
+        from_mint_vault_token_account: from_mint_vault_token_account_pubkey,
+        to_mint_vault_token_account: to_mint_vault_token_account_pubkey,
         to_mint_user_token_account: to_mint_ata_pubkey,
         payer: payer_pubkey,
         program_as_signer: program_as_signer,

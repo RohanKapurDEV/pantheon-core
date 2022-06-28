@@ -203,9 +203,9 @@ describe("autodca", async () => {
         program.programId
       );
 
-    // let dcaAccount = await program.account.dcaMetadata.fetch(
-    //   dcaMetadata.publicKey
-    // );
+    let dcaAccount = await program.account.dcaMetadata.fetch(
+      dcaMetadata.publicKey
+    );
 
     // console.log(parseInt(dcaAccount.createdAt));
     // console.log(dcaAccount.createdAt + dcaAccount.intervalLength);
