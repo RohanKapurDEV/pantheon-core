@@ -1,0 +1,49 @@
+[package]
+name = "accounts-api"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+# Core dependencies: Runtime, HTTP framework, and database client
+futures = "0.3"
+axum = { version = "0.5.1", features = ["json", "multipart", "headers", "tower-log"] }
+sqlx = { version = "0.5.13", features = ["runtime-tokio-native-tls", "mysql", "macros", "time", "tls"] }
+tokio = { version = "1", features = ["full"] }
+
+# Clap gives us a nice way to define config params for our application
+clap = { version = "3.1.9", features = ["derive", "env"] }
+
+# Axum requires tower
+tower = "0.4.12"
+tower-http = { version = "0.2.0", features = ["trace"] }
+http-body = "0.4.4"
+
+serde = { version = "1.0.136", features = ["derive"] }
+serde_json = "1.0.79"
+
+# JWT dependencies
+jwt = "0.16.0"
+hmac = "0.12.1"
+sha2 = "0.10.2"
+
+# Sqlx requires time as specified in feature flags
+time = "0.3.9"
+
+# Solana specific dependencies
+anchor-client = "0.24.2"
+spl-token = "3.2.0"
+recurring = { git = "https://github.com/RohanKapurDEV/orion", version = "0.1.0" }
+
+# Utility packages
+anyhow = "1.0.56"
+async-trait = "0.1.53"
+dotenv = "0.15.0"
+env_logger = "0.9.0"
+itertools = "0.10.3"
+log = "0.4.16"
+rand = "0.8.5"
+thiserror = "1.0.30"
+bytes = "1.1.0"
+axum-macros = "0.2.2"
