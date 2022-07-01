@@ -9,7 +9,7 @@ edition = "2021"
 # Core dependencies: Runtime, HTTP framework, and database client
 futures = "0.3"
 axum = { version = "0.5.1", features = ["json", "multipart", "headers", "tower-log"] }
-sqlx = { version = "0.5.13", features = ["runtime-tokio-native-tls", "mysql", "macros", "time", "tls"] }
+sqlx = { version = "0.6.0", features = ["runtime-tokio-native-tls", "mysql", "macros", "time", "tls"] }
 tokio = { version = "1", features = ["full"] }
 
 # Clap gives us a nice way to define config params for our application
