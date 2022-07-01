@@ -8,13 +8,11 @@ use anchor_client::solana_sdk::program_pack::Pack;
 use anchor_client::solana_sdk::pubkey::Pubkey;
 use anchor_client::ClientError;
 use anchor_client::{anchor_lang::AccountDeserialize, Client, Program};
+use autodca::state::{CrankAuthority, DcaMetadata};
 use axum::extract::{Extension, Path, Query};
 use axum::routing::{get, post};
 use axum::{Json, Router};
 use axum_macros::debug_handler;
-use recurring::state::MerchantAuthority;
-use recurring::state::PaymentConfig;
-use recurring::state::PaymentMetadata;
 use sqlx::mysql::MySqlQueryResult;
 use std::str::FromStr;
 
@@ -22,7 +20,7 @@ use std::str::FromStr;
 pub fn router() -> Router {
     Router::new()
         .route("/api/bb8", post(get_healthcheck))
-        .route("/api/accounts/dcaMetadata", post(post_payment_config))
+        .route("/api/accounts/dcaMetadata", post(post_dca_metadata))
 }
 
 #[derive(serde::Deserialize)]
@@ -31,107 +29,106 @@ struct NetworkParam {
 }
 #[derive(serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
-struct PaymentConfigRequest {
-    payment_config: PaymentConfigBody,
+struct DcaMetadataPostRequest {
+    dca_metadata: DcaMetadataPostBody,
 }
 
 #[derive(serde::Serialize, serde::Deserialize)]
-pub struct PaymentConfigBody {
-    pub address: String,
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-#[serde(rename_all = "camelCase")]
-struct PaymentMetadataRequest {
-    payment_metadata: PaymentMetadataBody,
-}
-
-#[derive(serde::Serialize, serde::Deserialize)]
-pub struct PaymentMetadataBody {
+pub struct DcaMetadataPostBody {
     pub address: String,
 }
 
 /// Posts the payment config account to the database
 #[debug_handler]
-async fn post_payment_config(
+async fn post_dca_metadata(
     ctx: Extension<ApiContext>,
-    Json(body): Json<PaymentConfigRequest>,
+    Json(body): Json<DcaMetadataPostRequest>,
     Query(params): Query<NetworkParam>,
 ) -> Result<Json<bool>> {
-    todo!()
-    // let address = body.payment_config.address;
-    // let network_param = params.network.clone();
+    let address = body.dca_metadata.address;
+    let network_param = params.network.clone();
 
-    // if network_param != "mainnet" && network_param != "devnet" {
-    //     return Err(Error::BadRequest);
-    // }
+    if network_param != "mainnet" && network_param != "devnet" {
+        return Err(Error::BadRequest);
+    }
 
-    // let try_pubkey = Pubkey::from_str(&address);
+    let try_pubkey = Pubkey::from_str(&address);
 
-    // match try_pubkey {
-    //     Ok(pubkey) => {
-    //         let client = build_client(network_param);
-    //         let program = client.program(Pubkey::default());
+    match try_pubkey {
+        Ok(pubkey) => {
+            let client = build_client(network_param);
+            let program = client.program(Pubkey::default());
 
-    //         // Validate pubkey does belong to correct program onchain
-    //         let account_res = program.rpc().get_account(&pubkey);
-    //         let raw_payment_config: Account;
-    //         let deserialized_payment_config: PaymentConfig;
+            // Validate pubkey does belong to correct program onchain
+            let account_res = program.rpc().get_account(&pubkey);
+            let raw_dca_metadata: Account;
+            let deserialized_dca_metadata: DcaMetadata;
 
-    //         match account_res {
-    //             Ok(account) => {
-    //                 let owner = account.owner;
+            match account_res {
+                Ok(account) => {
+                    let owner = account.owner;
 
-    //                 if owner.to_string() != PROGRAM_ID {
-    //                     return Err(Error::unprocessable_entity([(
-    //                         "payment_config owner",
-    //                         "request.payment_config.address passed in was a valid account but is owned by the wrong program",
-    //                     )]));
-    //                 }
+                    if owner.to_string() != PROGRAM_ID {
+                        return Err(Error::unprocessable_entity([(
+                            "payment_config owner",
+                            "request.dca_metadata.address passed in was a valid account but is owned by the wrong program",
+                        )]));
+                    }
 
-    //                 raw_payment_config = account;
-    //             }
-    //             Err(e) => {
-    //                 return Err(Error::unprocessable_entity([(
-    //                     "solana client",
-    //                     e.to_string(),
-    //                 )]));
-    //             }
-    //         }
+                    raw_dca_metadata = account;
+                }
+                Err(e) => {
+                    return Err(Error::unprocessable_entity([(
+                        "solana client error",
+                        e.to_string(),
+                    )]));
+                }
+            }
 
-    //         let raw_bytes: &mut &[u8] = &mut &raw_payment_config.data[..];
-    //         let try_deserialize_payment_config: Result<
-    //             PaymentConfig,
-    //             anchor_client::anchor_lang::error::Error,
-    //         > = recurring::state::PaymentConfig::try_deserialize(raw_bytes);
+            let raw_bytes: &mut &[u8] = &mut &raw_dca_metadata.data[..];
+            let try_deserialize_dca_metadata: Result<
+                DcaMetadata,
+                anchor_client::anchor_lang::error::Error,
+            > = autodca::state::DcaMetadata::try_deserialize(raw_bytes);
 
-    //         // Validate that the pubkey is an account of type `PaymentConfig`
-    //         match try_deserialize_payment_config {
-    //             Ok(account) => {
-    //                 deserialized_payment_config = account;
-    //             }
-    //             Err(e) => {
-    //                 return Err(Error::unprocessable_entity([(
-    //                     "deserializing payment config",
-    //                     e.to_string(),
-    //                 )]));
-    //             }
-    //         }
+            // Validate that the pubkey is an account of type `DcaMetadata`
+            match try_deserialize_dca_metadata {
+                Ok(account) => {
+                    deserialized_dca_metadata = account;
+                }
+                Err(e) => {
+                    return Err(Error::unprocessable_entity([(
+                        "deserializing payment config",
+                        e.to_string(),
+                    )]));
+                }
+            }
 
-    //         // Validate that the pubkey is associated with correct MerchantAuthority from ApiContext
-    //         let associated_merchant_authority = deserialized_payment_config.merchant_authority;
+            // Validate that the pubkey is associated with correct CrankAuthority from ApiContext
+            let associated_crank_authority = deserialized_dca_metadata.crank_authority;
 
-    //         if associated_merchant_authority.to_string() != ctx.config.merchant_authority.clone() {
-    //             return Err(Error::unprocessable_entity([(
-    //                 "associated merchant authority",
-    //                 "request.payment_config.address passed in was a valid account but is associated with the wrong merchant authority",
-    //             )]));
-    //         }
-    //     }
-    //     Err(_e) => {
-    //         return Err(Error::BadRequest);
-    //     }
-    // }
+            if associated_crank_authority.to_string() != ctx.config.crank_authority.clone() {
+                return Err(Error::unprocessable_entity([(
+                    "associated crank authority",
+                    "request.dca_metadata.address passed in was a valid account that is owned by the right program but is associated with the wrong crank authority",
+                )]));
+            }
+
+            let dca_metadata_created_at = deserialized_dca_metadata.created_at;
+            let dca_metadata_amount_per_interval = deserialized_dca_metadata.amount_per_interval;
+            let dca_metadata_interval_length = deserialized_dca_metadata.interval_length;
+            let dca_metadata_interval_counter = deserialized_dca_metadata.interval_counter;
+            let dca_metadata_max_intervals = deserialized_dca_metadata.max_intervals;
+
+            if dca_metadata_interval_counter != 0 {
+                // Handle case where certain schedules have already been executed
+            } else {
+            }
+        }
+        Err(_e) => {
+            return Err(Error::BadRequest);
+        }
+    }
 
     // Insert into c3po
     // let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
@@ -153,13 +150,15 @@ async fn post_payment_config(
     // }
 
     // return Ok(Json(true));
+
+    todo!();
 }
 
 /// Posts the payment metadata account to the database and populates the payment_collections table appropriately
 #[debug_handler]
 async fn post_payment_metadata(
     ctx: Extension<ApiContext>,
-    Json(body): Json<PaymentMetadataRequest>,
+    Json(body): Json<bool>,
     Query(params): Query<NetworkParam>,
 ) -> Result<Json<bool>> {
     todo!()
@@ -378,27 +377,6 @@ async fn post_payment_metadata(
 
 /// Return all scheduled payments for a specific payment metadata account
 async fn get_schedule_for_payment_metadata() -> Result<Json<bool>> {
-    todo!()
-}
-
-/// Return all scheduled payments associated with a specific payment config account
-async fn get_schedule_for_payment_config() -> Result<Json<bool>> {
-    todo!()
-}
-
-/// Return all upcoming payments for a specific payment_config
-async fn get_upcoming_payments_for_payment_config() -> Result<Json<bool>> {
-    todo!()
-}
-
-/// Check to see whether or not a specific payment_metadata is overdue on payments
-async fn get_check_overdue_for_payment_metadata() -> Result<Json<bool>> {
-    todo!()
-}
-
-/// Return all payment_metadatas associated with a specific payment_config that are
-/// overdue by 1 or more payments at the time at which this endpoint has been called
-async fn get_all_overdue_accounts_for_payment_config() -> Result<Json<bool>> {
     todo!()
 }
 

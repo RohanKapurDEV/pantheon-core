@@ -31,6 +31,7 @@ use tower_http::trace::TraceLayer;
 #[derive(Clone)]
 struct ApiContext {
     config: Arc<Config>,
+    #[allow(dead_code)]
     db: MySqlPool,
 }
 

@@ -9,7 +9,7 @@ pub const MAINNET_HTTP_URL: &str = "https://solana-api.projectserum.com";
 pub const MAINNET_WS_URL: &str = "wss://solana-api.projectserum.com";
 pub const DEVNET_HTTP_URL: &str = "https://api.devnet.solana.com";
 pub const DEVNET_WS_URL: &str = "wss://api.devnet.solana.com";
-pub const PROGRAM_ID: &str = "4AWRyt6whM4M8C4rimokJxvDP6bts7NxWNxZuyFVKD31";
+pub const PROGRAM_ID: &str = "6dgkaNrtqjPbSzDTsDKErUV8JM45188MW756TVSDm2ZC";
 
 pub fn build_client(network: String) -> Client {
     let cluster: Cluster;
@@ -27,25 +27,7 @@ pub fn build_client(network: String) -> Client {
     return client;
 }
 
-// pub struct PaymentConfigSchema {
-//     pub payment_config_id: u64,
-//     pub address: String,
-//     pub network: String,
-//     pub inserted_at: OffsetDateTime,
-//     pub updated_at: OffsetDateTime,
-// }
-
-// /// Helper struct containing all data that would be needed to call the collect_payments instruction for any
-// /// given Config+Metadata pair
-// pub struct CollectPaymentsHelper {
-//     pub timestamp: i64,
-//     pub merchant_authority_index: u8,
-//     pub payment_config_index: u8,
-//     pub merchant_authority_pubkey: Pubkey,
-//     pub init_authority_pubkey: Pubkey,
-//     pub payment_config_pubkey: Pubkey,
-//     pub payment_metadata_pubkey: Pubkey,
-//     pub payment_token_account_pubkey: Pubkey,
-//     pub owner_payment_account_pubkey: Pubkey,
-//     pub owner_pubkey: Pubkey,
-// }
+pub struct ScheduleHelper {
+    pub timestamp: u64,
+    pub dca_metadata_address: String,
+}
