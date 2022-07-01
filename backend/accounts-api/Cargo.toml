@@ -34,7 +34,7 @@ time = "0.3.9"
 # Solana specific dependencies
 anchor-client = "0.24.2"
 spl-token = "3.2.0"
-recurring = { git = "https://github.com/RohanKapurDEV/orion", version = "0.1.0" }
+autodca = { path = "../../programs/autodca", version = "0.1.0" }
 
 # Utility packages
 anyhow = "1.0.56"

@@ -19,6 +19,7 @@ dependencies = [
  "anchor-client",
  "anyhow",
  "async-trait",
+ "autodca",
  "axum",
  "axum-macros",
  "bytes",
@@ -32,7 +33,6 @@ dependencies = [
  "jwt",
  "log",
  "rand 0.8.5",
- "recurring",
  "serde",
  "serde_json",
  "sha2 0.10.2",
@@ -2603,16 +2603,6 @@ dependencies = [
  "crossbeam-deque",
  "crossbeam-utils",
  "num_cpus",
-]
-
-[[package]]
-name = "recurring"
-version = "0.1.0"
-source = "git+https://github.com/RohanKapurDEV/orion#a029868ee56161b90589bbe3ddc629aa3a42ddaf"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "spl-token",
 ]
 
 [[package]]
