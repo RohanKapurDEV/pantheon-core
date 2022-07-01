@@ -54,6 +54,9 @@ async fn post_dca_metadata(
 
     let try_pubkey = Pubkey::from_str(&address);
 
+    let mut db_schedules: Vec<ScheduleHelper> = Vec::new();
+    let db_account: DcaMetadata;
+
     match try_pubkey {
         Ok(pubkey) => {
             let client = build_client(network_param);
@@ -121,8 +124,55 @@ async fn post_dca_metadata(
             let dca_metadata_max_intervals = deserialized_dca_metadata.max_intervals;
 
             if dca_metadata_interval_counter != 0 {
-                // Handle case where certain schedules have already been executed
+                // For now, return an error if the interval counter is not 0
+                return Err(Error::unprocessable_entity([(
+                    "interval counter",
+                    "request.dca_metadata.address passed in was a valid account that is owned by the right program but is associated with a non-zero interval counter",
+                )]));
             } else {
+                let mut schedule_vector: Vec<ScheduleHelper> = Vec::new();
+
+                for i in 0..dca_metadata_max_intervals {
+                    let schedule_helper = ScheduleHelper {
+                        // NOTE: Careful! This adds in the zero index as the first interval. Do not write that into
+                        // the database
+                        timestamp: dca_metadata_created_at
+                            + (i as u64 * dca_metadata_interval_length),
+                        address: pubkey.to_string(),
+                        amount_per_interval: dca_metadata_amount_per_interval,
+                        interval_counter: dca_metadata_interval_counter,
+                        interval_length: dca_metadata_interval_length,
+                        max_intervals: dca_metadata_max_intervals,
+                        created_at: dca_metadata_created_at,
+                        crank_authority: deserialized_dca_metadata.crank_authority.to_string(),
+                        from_token_mint: deserialized_dca_metadata.from_token_mint.to_string(),
+                        to_token_mint: deserialized_dca_metadata.to_token_mint.to_string(),
+                        owner: deserialized_dca_metadata.owner.to_string(),
+                        owner_from_token_account: deserialized_dca_metadata
+                            .owner_from_token_account
+                            .to_string(),
+                        owner_to_token_account: deserialized_dca_metadata
+                            .owner_to_token_account
+                            .to_string(),
+                        vault_from_token_account: deserialized_dca_metadata
+                            .vault_from_token_account
+                            .to_string(),
+                        vault_to_token_account: deserialized_dca_metadata
+                            .vault_to_token_account
+                            .to_string(),
+                    };
+
+                    schedule_vector.push(schedule_helper);
+                }
+
+                // Add correct schedule items to db_schedules vector
+                for item in schedule_vector {
+                    if item.timestamp != dca_metadata_created_at {
+                        db_schedules.push(item);
+                    }
+                }
+
+                db_account = deserialized_dca_metadata;
             }
         }
         Err(_e) => {

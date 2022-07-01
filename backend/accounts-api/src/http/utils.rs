@@ -28,6 +28,19 @@ pub fn build_client(network: String) -> Client {
 }
 
 pub struct ScheduleHelper {
-    pub timestamp: u64,
-    pub dca_metadata_address: String,
+    pub timestamp: u64, // Unix timestamp for when this specific schedule is active
+    pub address: String,
+    pub owner: String,
+    pub from_token_mint: String,
+    pub to_token_mint: String,
+    pub owner_from_token_account: String,
+    pub owner_to_token_account: String,
+    pub vault_from_token_account: String,
+    pub vault_to_token_account: String,
+    pub amount_per_interval: u64,
+    pub interval_length: u64,
+    pub interval_counter: u16,
+    pub max_intervals: u16,
+    pub crank_authority: String,
+    pub created_at: u64,
 }
