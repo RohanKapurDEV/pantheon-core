@@ -27,6 +27,7 @@ pub fn build_client(network: String) -> Client {
     return client;
 }
 
+#[derive(Debug, Clone)]
 pub struct ScheduleHelper {
     pub timestamp: u64, // Unix timestamp for when this specific schedule is active
     pub address: String,
