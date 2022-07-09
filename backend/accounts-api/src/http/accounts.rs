@@ -198,9 +198,12 @@ async fn post_dca_metadata(
 
     // Multiple instructions sent to database as a transaction
 
+    let mut tx = ctx.db.begin().await?;
+
     let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
-        r#"insert into dca_metadata (network, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
+        r#"insert into dca_metadata (network, created_at, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
         params.network,
+        db_account.created_at,
         address,
         db_account.owner.to_string(),
         db_account.from_token_mint.to_string(),
@@ -218,8 +221,13 @@ async fn post_dca_metadata(
     .execute(&ctx.db)
     .await;
 
+    let id: u64;
+
     match try_insert {
-        Ok(_value) => {}
+        Ok(value) => {
+            // Fetch id of the last insert into the database
+            id = value.last_insert_id();
+        }
         Err(_e) => {
             return Err(Error::unprocessable_entity([(
                 "database error",
@@ -227,6 +235,27 @@ async fn post_dca_metadata(
             )]));
         }
     }
+
+    for item in db_schedules_sorted {
+        let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
+            r#"insert into payment_schedule (network, timestamp, dca_metadata_id) VALUES (?, ?, ?)"#,
+        params.network, item.timestamp, id)
+        .execute(&ctx.db)
+        .await;
+
+        match try_insert {
+            Ok(_value) => {}
+            Err(_e) => {
+                return Err(Error::unprocessable_entity([(
+                    "database error",
+                    "an error occured with the database, please try again",
+                )]));
+            }
+        }
+    }
+
+    // Commit multiple changes to the database
+    tx.commit().await?;
 
     return Ok(Json(true));
 }
