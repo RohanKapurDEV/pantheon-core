@@ -2,7 +2,7 @@ create table if not exists dca_metadata (
     dca_metadata_id serial primary key,
     network varchar(10) not null,
     inserted_at timestamp not null default now(),
-    created_at timestamp not null,
+    created_at varchar(100) not null,
     dca_metadata_address varchar(50) not null unique,
     owner_address varchar(50) not null,
     from_token_mint varchar(50) not null,

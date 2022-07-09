@@ -3,5 +3,6 @@ create table if not exists payment_schedule (
     network varchar(10) not null,
     inserted_at timestamp not null default now(),
     timestamp varchar(50) not null,
-    dca_metadata_id bigint unsigned not null
+    dca_metadata_id bigint unsigned not null,
+    dca_metadata_address varchar(50) not null unique
 )

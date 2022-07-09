@@ -23,12 +23,27 @@ pub fn router() -> Router {
     Router::new()
         .route("/api/healthcheck", post(get_healthcheck))
         .route("/api/accounts/dcaMetadata", post(post_dca_metadata))
+        .route("/api/schedule", get(get_schedule_for_dca_metadata))
 }
 
 #[derive(serde::Deserialize)]
 struct NetworkParam {
     network: String,
 }
+
+#[derive(serde::Serialize)]
+struct GetScheduleForDcaMetadataResponse {
+    network: String,
+    dca_metadata_address: String,
+    schedule: Vec<String>,
+}
+
+#[derive(serde::Deserialize)]
+struct AddressAndNetworkParam {
+    address: String,
+    network: String,
+}
+
 #[derive(serde::Serialize, serde::Deserialize)]
 #[serde(rename_all = "camelCase")]
 struct DcaMetadataPostRequest {
@@ -78,7 +93,7 @@ async fn post_dca_metadata(
 
                     if owner.to_string() != PROGRAM_ID {
                         return Err(Error::unprocessable_entity([(
-                            "payment_config owner",
+                            "dca_metadata owner",
                             "request.dca_metadata.address passed in was a valid account but is owned by the wrong program",
                         )]));
                     }
@@ -190,7 +205,7 @@ async fn post_dca_metadata(
         .unwrap()
         .as_secs();
 
-    let mut db_schedules_sorted: Vec<ScheduleHelper> = db_schedules
+    let db_schedules_sorted: Vec<ScheduleHelper> = db_schedules
         .iter()
         .filter(|x| x.timestamp >= current_time)
         .cloned()
@@ -198,12 +213,12 @@ async fn post_dca_metadata(
 
     // Multiple instructions sent to database as a transaction
 
-    let mut tx = ctx.db.begin().await?;
+    let tx = ctx.db.begin().await?;
 
     let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
         r#"insert into dca_metadata (network, created_at, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
         params.network,
-        db_account.created_at,
+        db_account.created_at.to_string(),
         address,
         db_account.owner.to_string(),
         db_account.from_token_mint.to_string(),
@@ -239,7 +254,7 @@ async fn post_dca_metadata(
     for item in db_schedules_sorted {
         let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
             r#"insert into payment_schedule (network, timestamp, dca_metadata_id) VALUES (?, ?, ?)"#,
-        params.network, item.timestamp, id)
+        params.network, item.timestamp.to_string(), id)
         .execute(&ctx.db)
         .await;
 
@@ -261,8 +276,105 @@ async fn post_dca_metadata(
 }
 
 /// Return all scheduled payments for a specific dca metadata account
-async fn get_schedule_for_dca_metadata() -> Result<Json<bool>> {
-    todo!()
+#[debug_handler]
+async fn get_schedule_for_dca_metadata(
+    ctx: Extension<ApiContext>,
+    Query(params): Query<AddressAndNetworkParam>,
+) -> Result<Json<GetScheduleForDcaMetadataResponse>> {
+    let address_param = params.address;
+    let network_param = params.network;
+
+    // Validate network param
+    if network_param != "mainnet" && network_param != "devnet" {
+        return Err(Error::BadRequest);
+    }
+
+    // Check if address is a valid pubkey
+    match Pubkey::from_str(&address_param) {
+        Ok(value) => {
+            let pubkey = value;
+
+            let client = build_client(network_param.clone());
+            let program = client.program(Pubkey::default());
+
+            let account_res = program.rpc().get_account(&pubkey.clone());
+            let raw_dca_metadata: Account;
+
+            match account_res {
+                Ok(account) => {
+                    let owner = account.owner;
+
+                    if owner.to_string() != PROGRAM_ID {
+                        return Err(Error::unprocessable_entity([(
+                    "dca_metadata owner",
+                    "request.dca_metadata.address passed in was a valid account but is owned by the wrong program",
+                )]));
+                    }
+
+                    raw_dca_metadata = account;
+                }
+                Err(e) => {
+                    return Err(Error::unprocessable_entity([(
+                        "solana client error",
+                        e.to_string(),
+                    )]));
+                }
+            }
+
+            let raw_bytes: &mut &[u8] = &mut &raw_dca_metadata.data[..];
+            let try_deserialize_dca_metadata: Result<
+                DcaMetadata,
+                anchor_client::anchor_lang::error::Error,
+            > = autodca::state::DcaMetadata::try_deserialize(raw_bytes);
+
+            // Validate that the pubkey is an account of type `DcaMetadata`
+            match try_deserialize_dca_metadata {
+                Ok(_account) => {}
+                Err(e) => {
+                    return Err(Error::unprocessable_entity([(
+                        "deserializing dca_metadata",
+                        e.to_string(),
+                    )]));
+                }
+            }
+        }
+        Err(_e) => {
+            return Err(Error::unprocessable_entity([(
+                "address",
+                "request.dca_metadata.address passed in was not a valid pubkey",
+            )]));
+        }
+    };
+
+    // What we want to do here is check the database for which sceduled payments are associated with this dca metadata account.
+    let try_db_schedules_fetch = sqlx::query!(
+        r#"select * from payment_schedule where dca_metadata_address = ?"#,
+        address_param
+    )
+    .fetch_optional(&ctx.db)
+    .await;
+
+    match try_db_schedules_fetch {
+        Ok(db_schedules) => {
+            let mut timestamp_vec: Vec<String> = Vec::new();
+
+            for item in db_schedules {
+                timestamp_vec.push(item.timestamp);
+            }
+
+            return Ok(Json(GetScheduleForDcaMetadataResponse {
+                network: network_param,
+                dca_metadata_address: address_param,
+                schedule: timestamp_vec,
+            }));
+        }
+        Err(_e) => {
+            return Err(Error::unprocessable_entity([(
+                "database error",
+                "an error occured with the database, please try again",
+            )]));
+        }
+    }
 }
 
 /// Simple healthcheck endpoint for this microservice
