@@ -207,7 +207,8 @@ async fn post_dca_metadata(
         .collect();
 
     // Multiple instructions sent to database as a transaction
-
+    // Sidenote: People cannot send duplicate schedules to the database. This is because the dca_metadata insert will fail and the transaction will rollback
+    // so we don't need to handle that case in any direct manner
     let tx = ctx.db.begin().await?;
 
     let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
@@ -271,6 +272,9 @@ async fn post_dca_metadata(
 }
 
 /// Return all scheduled payments for a specific dca metadata account
+///
+/// Query param: network
+/// Query param: dca_metadata_address
 #[debug_handler]
 async fn get_schedule_for_dca_metadata(
     ctx: Extension<ApiContext>,
