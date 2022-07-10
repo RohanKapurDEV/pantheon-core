@@ -337,6 +337,7 @@ async fn get_schedule_for_dca_metadata(
                 }
             }
         }
+
         Err(_e) => {
             return Err(Error::unprocessable_entity([(
                 "address",
