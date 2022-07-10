@@ -28,4 +28,4 @@ WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/target/release/accounts-api /usr/local/bin/accounts-api
 
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/accounts-api"]
+ENTRYPOINT ["/usr/local/bin/accounts-api", "-e", "DATABASE_URL", "-e", "CRANK_AUTHORITY", "-e", "MAX_CONNECTIONS"]
