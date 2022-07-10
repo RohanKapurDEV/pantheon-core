@@ -1,8 +1,7 @@
 use anchor_client::{
-    solana_sdk::{commitment_config::CommitmentConfig, pubkey::Pubkey, signature::Keypair},
+    solana_sdk::{commitment_config::CommitmentConfig, signature::Keypair},
     Client, Cluster,
 };
-use sqlx::types::time::OffsetDateTime;
 use std::rc::Rc;
 
 pub const MAINNET_HTTP_URL: &str = "https://solana-api.projectserum.com";
