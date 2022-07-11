@@ -6,6 +6,14 @@ ARG DATABASE_URL=${DATABASE_URL}
 
 ENV DATABASE_URL=${DATABASE_URL}
 
+ARG CRANK_AUTHORITY=${CRANK_AUTHORITY}
+
+ENV CRANK_AUTHORITY=${CRANK_AUTHORITY}
+
+ARG MAX_CONNECTIONS=${MAX_CONNECTIONS}
+
+ENV MAX_CONNECTIONS=${MAX_CONNECTIONS}
+
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y \
     ca-certificates curl build-essential pkg-config libssl-dev libpq-dev libudev-dev
