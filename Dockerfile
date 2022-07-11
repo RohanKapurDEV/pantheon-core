@@ -2,6 +2,10 @@
 
 FROM ubuntu:20.04 as build
 
+ARG DATABASE_URL=${DATABASE_URL}
+
+ENV DATABASE_URL=${DATABASE_URL}
+
 RUN apt-get update
 RUN apt-get install --no-install-recommends -y \
     ca-certificates curl build-essential pkg-config libssl-dev libpq-dev libudev-dev
@@ -28,4 +32,4 @@ WORKDIR /usr/src/app
 COPY --from=build /usr/src/app/target/release/accounts-api /usr/local/bin/accounts-api
 
 EXPOSE 8080
-ENTRYPOINT ["/usr/local/bin/accounts-api", "-e", "DATABASE_URL", "-e", "CRANK_AUTHORITY", "-e", "MAX_CONNECTIONS"]
+ENTRYPOINT ["/usr/local/bin/accounts-api"]

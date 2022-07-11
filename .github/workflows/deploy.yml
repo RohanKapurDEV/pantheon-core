@@ -48,6 +48,6 @@ jobs:
           MAX_CONNECTIONS: ${{ secrets.MAX_CONNECTIONS }}
           CRANK_AUTHORITY: ${{ secrets.CRANK_AUTHORITY }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg DATABASE_URL=$DATABASE_URL -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
