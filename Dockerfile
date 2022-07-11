@@ -1,5 +1,3 @@
-
-
 FROM ubuntu:20.04 as build
 
 ARG DATABASE_URL=${DATABASE_URL}

@@ -42,7 +42,7 @@ jobs:
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: panthoen-accounts-api
+          ECR_REPOSITORY: pantheon-accounts-api
           IMAGE_TAG: ${{ github.sha }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           MAX_CONNECTIONS: ${{ secrets.MAX_CONNECTIONS }}
