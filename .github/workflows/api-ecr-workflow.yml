@@ -10,10 +10,14 @@ on:
       - "main"
     paths:
       - "backend/**"
+      - ".github/workflows/api-ecr-workflow.yml"
 
   pull_request:
     branches:
       - "main"
+    paths:
+      - "backend/**"
+      - ".github/workflows/api-ecr-workflow.yml"
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
