@@ -16,9 +16,9 @@ use std::time::{SystemTime, UNIX_EPOCH};
 /// Router for all accounts endpoints
 pub fn router() -> Router {
     Router::new()
-        .route("/api/healthcheck", post(get_healthcheck))
-        .route("/api/accounts/dcaMetadata", post(post_dca_metadata))
+        .route("/api/healthcheck", get(get_healthcheck))
         .route("/api/schedule", get(get_schedule_for_dca_metadata))
+        .route("/api/accounts/dcaMetadata", post(post_dca_metadata))
 }
 
 #[derive(serde::Deserialize)]
