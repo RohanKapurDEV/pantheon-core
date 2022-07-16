@@ -12,8 +12,8 @@ use anchor_spl::{
 /// There is an assumption in this code that isn't enforced or checked (because I don't think there exists a way
 /// to do it): the assumption is that the from_mint and to_mint token mints are both currently available via the
 /// Jupiter aggregator. If a mint is passed in that isn't supported in Jupiter, there is no way for the contract
-/// to know that and it won't throw any errors. At this point, every attempt to DCA using that mint will basically
-/// just fail. It is what it is, fellas.
+/// to know that and it won't throw any errors in regards to that fact specifically. At this point, every attempt
+/// to DCA using that mint will basically just fail. It is what it is, fellas.
 #[derive(Accounts)]
 #[instruction(amount_per_interval: u64, _interval_length: u64, max_intervals: u16)]
 pub struct InitializeDcaMetadata<'info> {
