@@ -60,7 +60,7 @@ async fn post_dca_metadata(
     Json(body): Json<DcaMetadataPostRequest>,
     Query(params): Query<NetworkParam>,
 ) -> Result<Json<bool>> {
-    let address = body.dca_metadata.address;
+    let address = body.dca_metadata.address.clone();
     let network_param = params.network.clone();
 
     if network_param != "mainnet" && network_param != "devnet" {
@@ -239,7 +239,9 @@ async fn post_dca_metadata(
             // Fetch id of the last insert into the database
             id = value.last_insert_id();
         }
-        Err(_e) => {
+        Err(e) => {
+            println!("Error inserting into dca_metadata table: ${:?}", e);
+
             return Err(Error::unprocessable_entity([(
                 "database error",
                 "an error occured with the database, please try again",
@@ -249,14 +251,16 @@ async fn post_dca_metadata(
 
     for item in db_schedules_sorted {
         let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
-            r#"insert into payment_schedule (network, timestamp, dca_metadata_id) VALUES (?, ?, ?)"#,
-        params.network, item.timestamp.to_string(), id)
+            r#"insert into payment_schedule (network, timestamp, dca_metadata_id, dca_metadata_address) VALUES (?, ?, ?, ?)"#,
+        params.network, item.timestamp.to_string(), id, body.dca_metadata.address)
         .execute(&ctx.db)
         .await;
 
         match try_insert {
             Ok(_value) => {}
-            Err(_e) => {
+            Err(e) => {
+                println!("Error inserting into payment_schedule table: ${:?}", e);
+
                 return Err(Error::unprocessable_entity([(
                     "database error",
                     "an error occured with the database, please try again",
