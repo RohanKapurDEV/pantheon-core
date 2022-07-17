@@ -351,7 +351,7 @@ async fn get_schedule_for_dca_metadata(
         r#"select * from payment_schedule where dca_metadata_address = ?"#,
         address_param
     )
-    .fetch_optional(&ctx.db)
+    .fetch_all(&ctx.db)
     .await;
 
     match try_db_schedules_fetch {
