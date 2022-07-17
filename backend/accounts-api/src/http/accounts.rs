@@ -261,6 +261,9 @@ async fn post_dca_metadata(
             Err(e) => {
                 println!("Error inserting into payment_schedule table: ${:?}", e);
 
+                // Rollback the entire transaction if a schedule insert fails
+                tx.rollback().await?;
+
                 return Err(Error::unprocessable_entity([(
                     "database error",
                     "an error occured with the database, please try again",
