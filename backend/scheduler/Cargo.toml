@@ -6,3 +6,14 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# Core dependencies
+sqlx = { version = "0.6.0", features = ["runtime-tokio-native-tls", "mysql", "macros", "time", "tls"] }
+tokio = { version = "1", features = ["full"] }
+
+# Clap gives us a nice way to define config params for our application
+clap = { version = "3.1.9", features = ["derive", "env"] }
+
+# Utility dependencies
+serde = { version = "1.0.136", features = ["derive"] }
+serde_json = "1.0.79"
+anyhow = "1.0.56"
