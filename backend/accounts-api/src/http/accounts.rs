@@ -30,7 +30,7 @@ struct NetworkParam {
 struct GetScheduleForDcaMetadataResponse {
     network: String,
     dca_metadata_address: String,
-    schedule: Vec<String>,
+    schedule: Vec<u32>,
 }
 
 #[derive(serde::Deserialize)]
@@ -364,7 +364,7 @@ async fn get_schedule_for_dca_metadata(
 
     match try_db_schedules_fetch {
         Ok(db_schedules) => {
-            let mut timestamp_vec: Vec<String> = Vec::new();
+            let mut timestamp_vec: Vec<u32> = Vec::new();
 
             for item in db_schedules {
                 timestamp_vec.push(item.timestamp);
