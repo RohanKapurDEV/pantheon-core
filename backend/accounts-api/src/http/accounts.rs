@@ -147,7 +147,7 @@ async fn post_dca_metadata(
             } else {
                 let mut schedule_vector: Vec<ScheduleHelper> = Vec::new();
 
-                for i in 0..dca_metadata_max_intervals {
+                for i in 0..dca_metadata_max_intervals + 1 {
                     let schedule_helper = ScheduleHelper {
                         // NOTE: Careful! This adds in the zero index as the first interval. Do not write that into
                         // the database
