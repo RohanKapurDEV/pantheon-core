@@ -2798,6 +2798,7 @@ name = "scheduler"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "chrono",
  "clap 3.2.5",
  "serde",
  "serde_json",
@@ -3711,6 +3712,7 @@ dependencies = [
  "bitflags",
  "byteorder",
  "bytes",
+ "chrono",
  "crc",
  "crossbeam-queue",
  "digest 0.10.3",
