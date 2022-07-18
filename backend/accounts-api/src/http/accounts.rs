@@ -200,6 +200,7 @@ async fn post_dca_metadata(
         .unwrap()
         .as_secs();
 
+    // Only try to schedule DCAs that are upcoming and not ones whose time has passed
     let db_schedules_sorted: Vec<ScheduleHelper> = db_schedules
         .iter()
         .filter(|x| x.timestamp >= current_time)
@@ -214,7 +215,7 @@ async fn post_dca_metadata(
     let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
         r#"insert into dca_metadata (network, created_at, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
         params.network,
-        db_account.created_at.to_string(),
+        db_account.created_at,
         address,
         db_account.owner.to_string(),
         db_account.from_token_mint.to_string(),
@@ -252,7 +253,7 @@ async fn post_dca_metadata(
     for item in db_schedules_sorted {
         let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
             r#"insert into payment_schedule (network, timestamp, dca_metadata_id, dca_metadata_address) VALUES (?, ?, ?, ?)"#,
-        params.network, item.timestamp.to_string(), id, body.dca_metadata.address)
+        params.network, item.timestamp, id, body.dca_metadata.address)
         .execute(&ctx.db)
         .await;
 
