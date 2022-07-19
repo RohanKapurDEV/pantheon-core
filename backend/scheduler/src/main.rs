@@ -14,7 +14,7 @@ async fn main() -> anyhow::Result<()> {
         .duration_since(UNIX_EPOCH)
         .expect("Time went backwards");
 
-    let unix_timestamp = since_the_epoch.as_secs().to_string();
+    let unix_timestamp = since_the_epoch.as_secs();
     // Parse our configuration from the environment.
     // This will exit with a help message if something is wrong.
     let config: Config = Config::parse();
@@ -30,14 +30,12 @@ async fn main() -> anyhow::Result<()> {
         unix_timestamp
     )
     .fetch_all(&db)
-    .await;
+    .await?;
+
+    for i in try_fetching_schedules {
+        // Run the payment schedule through the TS api
+        println!("{:?}", i);
+    }
 
     Ok(())
-}
-
-// NOTES:
-// ok so still not sure how error handling will work. what to do when an api call fails? retry max like 5 times?
-
-async fn fetch_schedules() -> Result<MySqlQueryResult, sqlx::Error> {
-    todo!()
 }
