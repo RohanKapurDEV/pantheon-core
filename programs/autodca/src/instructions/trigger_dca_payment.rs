@@ -19,6 +19,7 @@ pub struct TriggerDcaPayment<'info> {
     )]
     pub crank_authority: Account<'info, CrankAuthority>,
 
+    #[account(mut)]
     pub dca_metadata: Account<'info, DcaMetadata>,
 
     #[account(
