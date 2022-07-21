@@ -9,14 +9,14 @@ on:
     branches:
       - "main"
     paths:
-      - "backend/**"
+      - "backend/accounts-api/**"
       - ".github/workflows/api-ecr-workflow.yml"
 
   pull_request:
     branches:
       - "main"
     paths:
-      - "backend/**"
+      - "backend/accounts-api/**"
       - ".github/workflows/api-ecr-workflow.yml"
 
   # Allows you to run this workflow manually from the Actions tab
