@@ -1,6 +1,6 @@
 use anyhow::Context;
 use clap::Parser;
-use sqlx::mysql::{MySqlPoolOptions, MySqlQueryResult};
+use sqlx::mysql::MySqlPoolOptions;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 mod config;

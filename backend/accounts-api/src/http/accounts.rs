@@ -5,8 +5,14 @@ use anchor_client::anchor_lang::AccountDeserialize;
 use anchor_client::solana_sdk::account::Account;
 use anchor_client::solana_sdk::pubkey::Pubkey;
 use autodca::state::DcaMetadata;
-use axum::extract::{Extension, Query};
-use axum::routing::{get, post};
+use axum::{
+    extract::{Extension, Query},
+    response::IntoResponse,
+};
+use axum::{
+    http::StatusCode,
+    routing::{get, post},
+};
 use axum::{Json, Router};
 use axum_macros::debug_handler;
 use sqlx::mysql::MySqlQueryResult;
@@ -59,7 +65,7 @@ async fn post_dca_metadata(
     ctx: Extension<ApiContext>,
     Json(body): Json<DcaMetadataPostRequest>,
     Query(params): Query<NetworkParam>,
-) -> Result<Json<bool>> {
+) -> Result<StatusCode, Error> {
     let address = body.dca_metadata.address.clone();
     let network_param = params.network.clone();
 
@@ -276,7 +282,7 @@ async fn post_dca_metadata(
     // Commit multiple changes to the database
     tx.commit().await?;
 
-    return Ok(Json(true));
+    return Ok(StatusCode::CREATED);
 }
 
 /// Return all scheduled payments for a specific dca metadata account
