@@ -23,6 +23,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
+# Change to COPY ./.. . when switching to Docker compose syntax for multiple builds
 COPY . .
 
 RUN cargo build --release
