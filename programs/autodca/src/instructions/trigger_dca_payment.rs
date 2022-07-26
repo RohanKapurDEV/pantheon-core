@@ -22,6 +22,7 @@ pub struct TriggerDcaPayment<'info> {
     #[account(mut)]
     pub dca_metadata: Account<'info, DcaMetadata>,
 
+    // Not actually enforced by the contract, but this should be an ATA
     #[account(
         mut,
         constraint = from_mint_crank_authority_token_account.owner == payer.key() @ AutoDcaError::CurrentCrankDoesNotOwnTokenAccount,

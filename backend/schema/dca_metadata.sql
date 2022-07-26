@@ -1,4 +1,4 @@
-create table if not exists dca_metadata (
+create table if not exists DcaMetadata (
     dca_metadata_id serial primary key,
     network varchar(10) not null,
     inserted_at timestamp not null default now(),

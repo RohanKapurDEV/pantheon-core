@@ -26,7 +26,7 @@ async fn main() -> anyhow::Result<()> {
         .context("could not connect to database_url")?;
 
     let try_fetching_schedules = sqlx::query!(
-        "SELECT * FROM payment_schedule WHERE timestamp <= ?",
+        "SELECT * FROM PaymentSchedule WHERE timestamp <= ?",
         unix_timestamp
     )
     .fetch_all(&db)

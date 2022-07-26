@@ -5,10 +5,7 @@ use anchor_client::anchor_lang::AccountDeserialize;
 use anchor_client::solana_sdk::account::Account;
 use anchor_client::solana_sdk::pubkey::Pubkey;
 use autodca::state::DcaMetadata;
-use axum::{
-    extract::{Extension, Query},
-    response::IntoResponse,
-};
+use axum::extract::{Extension, Query};
 use axum::{
     http::StatusCode,
     routing::{get, post},
@@ -219,7 +216,7 @@ async fn post_dca_metadata(
     let tx = ctx.db.begin().await?;
 
     let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
-        r#"insert into dca_metadata (network, created_at, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
+        r#"insert into DcaMetadata (network, created_at, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
         params.network,
         db_account.created_at,
         address,
@@ -258,7 +255,7 @@ async fn post_dca_metadata(
 
     for item in db_schedules_sorted {
         let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
-            r#"insert into payment_schedule (network, timestamp, dca_metadata_id, dca_metadata_address) VALUES (?, ?, ?, ?)"#,
+            r#"insert into PaymentSchedule (network, timestamp, dca_metadata_id, dca_metadata_address) VALUES (?, ?, ?, ?)"#,
         params.network, item.timestamp, id, body.dca_metadata.address)
         .execute(&ctx.db)
         .await;
@@ -266,7 +263,7 @@ async fn post_dca_metadata(
         match try_insert {
             Ok(_value) => {}
             Err(e) => {
-                println!("Error inserting into payment_schedule table: ${:?}", e);
+                println!("Error inserting into PaymentSchedule table: ${:?}", e);
 
                 // Rollback the entire transaction if a schedule insert fails
                 tx.rollback().await?;
@@ -362,7 +359,7 @@ async fn get_schedule_for_dca_metadata(
 
     // What we want to do here is check the database for which sceduled payments are associated with this dca metadata account.
     let try_db_schedules_fetch = sqlx::query!(
-        r#"select * from payment_schedule where dca_metadata_address = ?"#,
+        r#"select * from PaymentSchedule where dca_metadata_address = ?"#,
         address_param
     )
     .fetch_all(&ctx.db)
