@@ -12,7 +12,9 @@ Pantheon is a protocol on Solana for vaults that automate common trading pattern
 
 ## Offchain Programs
 
-- `lambda-sst` - Serverless functions that allow users to index DCA schedules into a MySQL database and automagically execute them when they're due
+- `accounts-api` - An API for indexing smart contract data into a MySQL database
+- `schdeuler` - A binary run on a crontab cycle that reads data from the MySQL database and schedules the necessary DCA swaps when they're due
+- `executor` - An API that the scheduler communicates with when it needs to execute DCA swaps using [Jupiter Exchange](https://www.jup.ag/infra)
 - `autodca-client` - A CLI tool to invoke the autodca program instructions without having to manually write any code or clients
 
 ## Building and running tests
@@ -25,10 +27,6 @@ npm install && anchor build
 anchor test
 ```
 
-## On trustlessness in code
+## License
 
-As much as we all love applauding DeFi and Web3 for being decentralized, most smart contracts are not actually trustless, and the AutoDCA program is no different. Here are some things to keep in mind when interacting with this code:
-
-- There does exist a `CrankAuthority` account that every `DcaMetadata` account must associate with. The `current_authority` of the `CrankAuthority` is the only entity allowed to execute DCA schedules for any given `DcaMetadata`. One can make the argument that this means the `CrankAuthority` is a privileged entity. Not exactly a big deal but probably good to keep in mind.
-
-- Jupiter v2 order routing is too complex to shove into the logic of any single contract instruction. Because of this, the `trigger_dca_payment` instruction that the `CrankAuthority` runs only extracts tokens from the contract's vault, into a token account owned by the current authority of the crank. After which the crank authority is free to run the jupiter route on the funds **outside** of the contracts execution context, and then return the result of the swap into the vault. Once again, not a big deal at all (since you can read the code that executes this entire series of actions, and this entire sequence of withdraw -> swap -> deposit is meant to be 1 atomic transaction that is verifiable onchain) but it's easy to see how one could argue that there exists a moment where people can be rugged if they were to rely on a malicious `CrankAuthority`. This assertion is 100% correct and should always be kept in mind. If you are particularly paranoid, you should run your own crank (+ `CrankAuthority`) and manage positions manually using the tools provided in this repo. The second best option is to use the hosted infra and tooling from Pantheon, accessible via our frontend website. There is no third best option, unfortunately.
+Pantheon Core is licensed under Apache 2.0.
