@@ -3,5 +3,5 @@ members = [
     "programs/*",
     "local/*",
     "backend/accounts-api",
-    "backend/executor"
+    "backend/scheduler"
 ]
