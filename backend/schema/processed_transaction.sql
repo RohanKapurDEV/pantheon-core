@@ -3,6 +3,8 @@ create table if not exists ProcessedSchedule (
     network varchar(10) not null,
     inserted_at timestamp not null default now(),
     tx_sig varchar(150) not null,
+    inputAmount bigint unsigned not null,
+    outputAmount bigint unsigned not null,
     dca_metadata_id bigint unsigned not null,
     dca_metadata_address varchar(50) not null
 );
