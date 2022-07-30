@@ -29,6 +29,12 @@ struct NetworkParam {
     network: String,
 }
 
+#[derive(serde::Deserialize)]
+struct NetworkAndSlippageParam {
+    network: String,
+    slippage: String,
+}
+
 #[derive(serde::Serialize)]
 struct GetScheduleForDcaMetadataResponse {
     network: String,
@@ -61,10 +67,11 @@ pub struct DcaMetadataPostBody {
 async fn post_dca_metadata(
     ctx: Extension<ApiContext>,
     Json(body): Json<DcaMetadataPostRequest>,
-    Query(params): Query<NetworkParam>,
+    Query(params): Query<NetworkAndSlippageParam>,
 ) -> Result<StatusCode, Error> {
     let address = body.dca_metadata.address.clone();
     let network_param = params.network.clone();
+    let slippage_param = params.slippage.clone();
 
     if network_param != "mainnet" && network_param != "devnet" {
         return Err(Error::BadRequest);
@@ -216,9 +223,10 @@ async fn post_dca_metadata(
     let tx = ctx.db.begin().await?;
 
     let try_insert: Result<MySqlQueryResult, sqlx::Error> = sqlx::query!(
-        r#"insert into DcaMetadata (network, created_at, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
+        r#"insert into DcaMetadata (network, created_at, slippage, dca_metadata_address, owner_address, from_token_mint, to_token_mint, owner_from_token_account, owner_to_token_account, vault_from_token_account, vault_to_token_account, amount_per_interval, interval_length, interval_counter, max_intervals, crank_authority) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"#,
         params.network,
         db_account.created_at,
+        slippage_param,
         address,
         db_account.owner.to_string(),
         db_account.from_token_mint.to_string(),
