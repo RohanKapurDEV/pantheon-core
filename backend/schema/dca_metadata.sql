@@ -3,6 +3,7 @@ create table if not exists DcaMetadata (
     network varchar(10) not null,
     inserted_at timestamp not null default now(),
     created_at int unsigned not null,
+    slippage varchar(25) not null default "1",
     dca_metadata_address varchar(50) not null unique,
     owner_address varchar(50) not null,
     from_token_mint varchar(50) not null,
