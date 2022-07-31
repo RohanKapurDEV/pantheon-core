@@ -96,6 +96,7 @@ export class AppController {
         vaultToTokenMint: dcaMetadata.to_token_mint,
       });
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       returnTxId = tryReturn;
     } catch (error) {
       throw new Error('Return failed. Error: ' + error);
