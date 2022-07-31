@@ -1,0 +1,49 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model DcaMetadata {
+  dca_metadata_id          BigInt   @id @unique(map: "dca_metadata_id") @default(autoincrement()) @db.UnsignedBigInt
+  network                  String   @db.VarChar(10)
+  inserted_at              DateTime @default(now()) @db.Timestamp(0)
+  created_at               Int      @db.UnsignedInt
+  slippage                 String   @default("1") @db.VarChar(25)
+  dca_metadata_address     String   @unique(map: "dca_metadata_address") @db.VarChar(50)
+  owner_address            String   @db.VarChar(50)
+  from_token_mint          String   @db.VarChar(50)
+  to_token_mint            String   @db.VarChar(50)
+  owner_from_token_account String   @db.VarChar(50)
+  owner_to_token_account   String   @db.VarChar(50)
+  vault_from_token_account String   @db.VarChar(50)
+  vault_to_token_account   String   @db.VarChar(50)
+  amount_per_interval      BigInt   @db.UnsignedBigInt
+  interval_length          BigInt   @db.UnsignedBigInt
+  interval_counter         Int      @db.UnsignedInt
+  max_intervals            Int      @db.UnsignedInt
+  crank_authority          String   @db.VarChar(50)
+}
+
+model PaymentSchedule {
+  payment_schedule_id  BigInt   @id @unique(map: "payment_schedule_id") @default(autoincrement()) @db.UnsignedBigInt
+  network              String   @db.VarChar(10)
+  inserted_at          DateTime @default(now()) @db.Timestamp(0)
+  timestamp            Int      @db.UnsignedInt
+  dca_metadata_id      BigInt   @db.UnsignedBigInt
+  dca_metadata_address String   @db.VarChar(50)
+}
+
+model ProcessedSchedule {
+  processed_schedule_id BigInt   @id @unique(map: "processed_schedule_id") @default(autoincrement()) @db.UnsignedBigInt
+  network               String   @db.VarChar(10)
+  inserted_at           DateTime @default(now()) @db.Timestamp(0)
+  tx_sig                String   @db.VarChar(150)
+  inputAmount           BigInt   @db.UnsignedBigInt
+  outputAmount          BigInt   @db.UnsignedBigInt
+  dca_metadata_id       BigInt   @db.UnsignedBigInt
+  dca_metadata_address  String   @db.VarChar(50)
+}
