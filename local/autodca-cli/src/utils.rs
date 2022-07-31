@@ -6,7 +6,7 @@ use anchor_client::{
 use std::fs;
 use std::rc::Rc;
 
-pub const PROGRAM_ID: &str = "6dgkaNrtqjPbSzDTsDKErUV8JM45188MW756TVSDm2ZC";
+pub const PROGRAM_ID: &str = "pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR";
 pub const TOKEN_PROGRAM: &str = "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA";
 pub const ASSOCIATED_TOKEN_PROGRAM: &str = "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL";
 pub const RENT: &str = "SysvarRent111111111111111111111111111111111";
