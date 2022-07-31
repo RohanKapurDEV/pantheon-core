@@ -27,6 +27,11 @@ npm install && anchor build
 anchor test
 ```
 
+## Deployments
+
+- [Mainnet smart contract deployment](https://explorer.solana.com/address/pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR)
+- [Public accounts api deployment base url]()
+
 ## License
 
 Pantheon Core is licensed under Apache 2.0.
