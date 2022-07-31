@@ -1,6 +1,10 @@
 [features]
 seeds = false
+
 [programs.localnet]
+autodca = "pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR"
+
+[programs.mainnet]
 autodca = "pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR"
 
 [registry]
