@@ -7,23 +7,6 @@ import Decimal from 'decimal.js';
 // Endpoints, connection
 export const ENV: Cluster = (process.env.CLUSTER as Cluster) || 'mainnet-beta';
 
-// Sometimes, your RPC endpoint may reject you if you spam too many RPC calls. Sometimes, your PRC server
-// may have invalid cache and cause problems.
-export const SOLANA_RPC_ENDPOINT =
-  ENV === 'devnet'
-    ? 'https://api.devnet.solana.com'
-    : 'https://ssc-dao.genesysgo.net';
-
-// Token Mints
-export const INPUT_MINT_ADDRESS =
-  ENV === 'devnet'
-    ? 'So11111111111111111111111111111111111111112' // SOL
-    : 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'; // USDC
-export const OUTPUT_MINT_ADDRESS =
-  ENV === 'devnet'
-    ? 'SRMuApVNdxXokk5GT7XD5cUUgXMBCoAz2LHeuAoKWRt' // SRM
-    : 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'; // USDT
-
 // Interface
 export interface JupToken {
   chainId: number; // 101,
