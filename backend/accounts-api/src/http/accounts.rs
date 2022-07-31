@@ -24,10 +24,10 @@ pub fn router() -> Router {
         .route("/api/accounts/dcaMetadata", post(post_dca_metadata))
 }
 
-#[derive(serde::Deserialize)]
-struct NetworkParam {
-    network: String,
-}
+// #[derive(serde::Deserialize)]
+// struct NetworkParam {
+//     network: String,
+// }
 
 #[derive(serde::Deserialize)]
 struct NetworkAndSlippageParam {
