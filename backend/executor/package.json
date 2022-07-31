@@ -21,9 +21,20 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@jup-ag/core": "^2.0.0-beta.3",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
+    "@prisma/client": "^4.1.0",
+    "@project-serum/anchor": "^0.25.0",
+    "@solana/spl-token": "^0.1.8",
+    "@solana/web3.js": "^1.50.0",
+    "@types/bs58": "^4.0.1",
+    "cross-fetch": "^3.1.5",
+    "decimal.js": "^10.3.1",
+    "dotenv": "^16.0.1",
+    "jsbi": "^4.3.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0"
@@ -43,6 +54,7 @@
     "eslint-plugin-prettier": "^4.0.0",
     "jest": "28.1.2",
     "prettier": "^2.3.2",
+    "prisma": "^4.1.0",
     "source-map-support": "^0.5.20",
     "supertest": "^6.1.3",
     "ts-jest": "28.0.5",
