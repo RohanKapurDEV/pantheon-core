@@ -55,6 +55,6 @@ jobs:
           MAX_CONNECTIONS: ${{ secrets.MAX_CONNECTIONS }}
           CRANK_AUTHORITY: ${{ secrets.CRANK_AUTHORITY }}
         run: |
-          docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg MAX_CONNECTIONS=$MAX_CONNECTIONS --build-arg CRANK_AUTHORITY=$CRANK_AUTHORITY -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg MAX_CONNECTIONS=$MAX_CONNECTIONS --build-arg CRANK_AUTHORITY=$CRANK_AUTHORITY -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/accounts-api/Dockerfile .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
