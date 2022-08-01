@@ -8,7 +8,7 @@ export * from './jupiter';
 // );
 
 export const AUTODCA_PROGRAM_ADDRESS =
-  '6dgkaNrtqjPbSzDTsDKErUV8JM45188MW756TVSDm2ZC';
+  'dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W';
 
 export const selectCluster = (cluster: string) => {
   switch (cluster) {

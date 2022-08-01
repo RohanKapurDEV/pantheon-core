@@ -29,7 +29,8 @@ anchor test
 
 ## Deployments
 
-- [Mainnet smart contract deployment](https://explorer.solana.com/address/pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR)
+- [Mainnet smart contract deployment](https://explorer.solana.com/address/dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W)
+- [Devnet smart contract deployment](https://explorer.solana.com/address/dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W?cluster=devnet)
 - [Public accounts api deployment base url]()
 
 ## License

@@ -2,10 +2,10 @@
 seeds = false
 
 [programs.localnet]
-autodca = "pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR"
+autodca = "dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W"
 
 [programs.mainnet]
-autodca = "pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR"
+autodca = "dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W"
 
 [registry]
 url = "https://anchor.projectserum.com"

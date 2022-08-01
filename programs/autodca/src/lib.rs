@@ -7,7 +7,7 @@ pub mod utils;
 
 use instructions::*;
 
-declare_id!("pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR");
+declare_id!("dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W");
 
 #[program]
 pub mod autodca {

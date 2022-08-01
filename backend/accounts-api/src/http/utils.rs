@@ -8,7 +8,7 @@ pub const MAINNET_HTTP_URL: &str = "https://solana-api.projectserum.com";
 pub const MAINNET_WS_URL: &str = "wss://solana-api.projectserum.com";
 pub const DEVNET_HTTP_URL: &str = "https://api.devnet.solana.com";
 pub const DEVNET_WS_URL: &str = "wss://api.devnet.solana.com";
-pub const PROGRAM_ID: &str = "pantxJWxUufSek3e1pdXagzjLJbvv8s6jesNxGKiEmR";
+pub const PROGRAM_ID: &str = "dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W";
 
 pub fn build_client(network: String) -> Client {
     let cluster: Cluster;
