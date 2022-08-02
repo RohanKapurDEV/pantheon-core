@@ -2,19 +2,22 @@ use anchor_client::{
     solana_sdk::{commitment_config::CommitmentConfig, signature::Keypair},
     Client, Cluster,
 };
-use std::rc::Rc;
+use std::{rc::Rc, sync::Arc};
 
-use crate::config::{self, Config};
+use crate::config::Config;
 
 pub const PROGRAM_ID: &str = "dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W";
 
-pub fn build_client(network: String, config: Config) -> Client {
+pub fn build_client(network: String, config: Arc<Config>) -> Client {
     let cluster: Cluster;
 
     if network == "mainnet" {
-        cluster = Cluster::Custom(config.mainnet_http_url, config.mainnet_ws_url);
+        cluster = Cluster::Custom(
+            config.mainnet_http_url.clone(),
+            config.mainnet_ws_url.clone(),
+        );
     } else {
-        cluster = Cluster::Custom(config.devnet_http_url, config.devnet_ws_url);
+        cluster = Cluster::Custom(config.devnet_http_url.clone(), config.devnet_ws_url.clone());
     }
 
     let commitment_config = CommitmentConfig::processed();
