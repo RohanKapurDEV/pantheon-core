@@ -4,19 +4,17 @@ use anchor_client::{
 };
 use std::rc::Rc;
 
-pub const MAINNET_HTTP_URL: &str = "https://solana-api.projectserum.com";
-pub const MAINNET_WS_URL: &str = "wss://solana-api.projectserum.com";
-pub const DEVNET_HTTP_URL: &str = "https://api.devnet.solana.com";
-pub const DEVNET_WS_URL: &str = "wss://api.devnet.solana.com";
+use crate::config::{self, Config};
+
 pub const PROGRAM_ID: &str = "dca6xdPrxUTazoTEq7ue51nhWWSH2efXRBJhYrxHB4W";
 
-pub fn build_client(network: String) -> Client {
+pub fn build_client(network: String, config: Config) -> Client {
     let cluster: Cluster;
 
     if network == "mainnet" {
-        cluster = Cluster::Custom(MAINNET_HTTP_URL.to_string(), MAINNET_WS_URL.to_string());
+        cluster = Cluster::Custom(config.mainnet_http_url, config.mainnet_ws_url);
     } else {
-        cluster = Cluster::Custom(DEVNET_HTTP_URL.to_string(), DEVNET_WS_URL.to_string());
+        cluster = Cluster::Custom(config.devnet_http_url, config.devnet_ws_url);
     }
 
     let commitment_config = CommitmentConfig::processed();

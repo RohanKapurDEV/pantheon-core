@@ -84,7 +84,7 @@ async fn post_dca_metadata(
 
     match try_pubkey {
         Ok(pubkey) => {
-            let client = build_client(network_param);
+            let client = build_client(network_param, ctx.config.clone());
             let program = client.program(Pubkey::default());
 
             // Validate pubkey does belong to correct program onchain
@@ -312,7 +312,7 @@ async fn get_schedule_for_dca_metadata(
         Ok(value) => {
             let pubkey = value;
 
-            let client = build_client(network_param.clone());
+            let client = build_client(network_param.clone(), ctx.config.clone());
             let program = client.program(Pubkey::default());
 
             let account_res = program.rpc().get_account(&pubkey.clone());
