@@ -54,7 +54,11 @@ jobs:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           MAX_CONNECTIONS: ${{ secrets.MAX_CONNECTIONS }}
           CRANK_AUTHORITY: ${{ secrets.CRANK_AUTHORITY }}
+          MAINNET_HTTP_URL: ${{ secrets.MAINNET_HTTP_URL }}
+          MAINNET_WS_URL: ${{ secrets.MAINNET_WS_URL }}
+          DEVNET_HTTP_URL: ${{ secrets.DEVNET_HTTP_URL }}
+          DEVNET_WS_URL: ${{ secrets.DEVNET_WS_URL }}
         run: |
-          docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg MAX_CONNECTIONS=$MAX_CONNECTIONS --build-arg CRANK_AUTHORITY=$CRANK_AUTHORITY -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/accounts-api/Dockerfile .
+          docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg MAX_CONNECTIONS=$MAX_CONNECTIONS --build-arg CRANK_AUTHORITY=$CRANK_AUTHORITY --build-arg MAINNET_HTTP_URL=$MAINNET_HTTP_URL --build-arg MAINNET_WS_URL=$MAINNET_WS_URL --build-arg DEVNET_HTTP_URL=$DEVNET_HTTP_URL --build-arg DEVNET_WS_URL=$DEVNET_WS_URL -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/accounts-api/Dockerfile .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
