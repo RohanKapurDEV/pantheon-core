@@ -50,8 +50,8 @@ export class SolanaService {
     // Network param used to determine RPC endpoint
     const connection =
       network == 'mainnet-beta'
-        ? new Connection(process.env.SOLANA_RPC_HTTP_MAINNET_URL)
-        : new Connection(process.env.SOLANA_RPC_HTTP_DEVNET_URL);
+        ? new Connection(process.env.MAINNET_HTTP_URL)
+        : new Connection(process.env.DEVNET_HTTP_URL);
 
     const wallet = new anchor.Wallet(CRANK_AUTHORITY_KEYPAIR);
     const provider = new anchor.AnchorProvider(connection, wallet, {
@@ -203,8 +203,8 @@ export class SolanaService {
     // Network param used to determine RPC endpoint
     const connection =
       network == 'mainnet-beta'
-        ? new Connection(process.env.SOLANA_RPC_HTTP_MAINNET_URL)
-        : new Connection(process.env.SOLANA_RPC_HTTP_DEVNET_URL);
+        ? new Connection(process.env.MAINNET_HTTP_URL)
+        : new Connection(process.env.DEVNET_HTTP_URL);
     const cluster = network == 'mainnet-beta' ? 'mainnet-beta' : 'devnet';
 
     let tokens: JupToken[] = [];
@@ -267,8 +267,8 @@ export class SolanaService {
 
     const connection =
       network == 'mainnet-beta'
-        ? new Connection(process.env.SOLANA_RPC_HTTP_MAINNET_URL)
-        : new Connection(process.env.SOLANA_RPC_HTTP_DEVNET_URL);
+        ? new Connection(process.env.MAINNET_HTTP_URL)
+        : new Connection(process.env.DEVNET_HTTP_URL);
 
     const wallet = new anchor.Wallet(CRANK_AUTHORITY_KEYPAIR);
     const provider = new anchor.AnchorProvider(connection, wallet, {
