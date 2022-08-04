@@ -55,6 +55,6 @@ jobs:
           CLUSTER: ${{ secrets.CLUSTER }}
           WALLET_PRIVATE_KEY: ${{ secrets.WALLET_PRIVATE_KEY }}
         run: |
-          docker build -f backend/executor/Dockerfile backend/executor
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/executor/Dockerfile backend/executor
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
