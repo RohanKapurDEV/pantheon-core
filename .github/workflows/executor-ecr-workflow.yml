@@ -49,7 +49,12 @@ jobs:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: pantheon-executor-api
           IMAGE_TAG: ${{ github.sha }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          MAINNET_HTTP_URL: ${{ secrets.MAINNET_HTTP_URL }}
+          DEVNET_HTTP_URL: ${{ secrets.DEVNET_HTTP_URL }}
+          CLUSTER: ${{ secrets.CLUSTER }}
+          WALLET_PRIVATE_KEY: ${{ secrets.WALLET_PRIVATE_KEY }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/executor/Dockerfile backend/executor
+          docker build --build-arg DATABASE_URL=$DATABASE_URL --build-arg MAINNET_HTTP_URL=$MAINNET_HTTP_URL --build-arg DEVNET_HTTP_URL=$DEVNET_HTTP_URL --build-arg CLUSTER=$CLUSTER --build-arg WALLET_PRIVATE_KEY=$WALLET_PRIVATE_KEY -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f backend/executor/Dockerfile backend/executor
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
