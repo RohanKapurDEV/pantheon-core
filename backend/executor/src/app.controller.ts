@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Response } from '@nestjs/common';
 import { AppService } from './app.service';
 import { SolanaService } from './solana/solana.service';
 import { DatabaseService } from './database/database.service';
@@ -124,11 +124,30 @@ export class AppController {
 
   // Fetch the pubkey of the current CrankAuthority configured into the deploy environment
   @Get('/crankAuthority')
-  async postRandomNumber(): Promise<string> {
-    return await this.solanaService.currentCrankAuthority();
+  async postRandomNumber(): Promise<CrankAuthorityResponse> {
+    const currentAuthority = await this.solanaService.currentCrankAuthority();
+
+    return {
+      crankAuthority: currentAuthority,
+    };
+  }
+
+  @Get('/healthcheck')
+  async healthcheck(): Promise<HealthCheckResponse> {
+    return {
+      status: 'ok',
+    };
   }
 }
 
 export interface PerformDcaSwapAndReturnRequest {
   paymentScheduleId: bigint;
+}
+
+export interface HealthCheckResponse {
+  status: string;
+}
+
+export interface CrankAuthorityResponse {
+  crankAuthority: string;
 }
