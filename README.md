@@ -13,7 +13,7 @@ Pantheon is a protocol on Solana for vaults that automate common trading pattern
 ## Offchain Programs
 
 - `accounts-api` - An API for indexing smart contract data into a MySQL database
-- `schdeuler` - A binary run on a crontab cycle that reads data from the MySQL database and schedules the necessary DCA swaps when they're due
+- `schdeuler` - NOT COMPLETE YET - A binary run on a crontab cycle that reads data from the MySQL database and schedules the necessary DCA swaps when they're due
 - `executor` - An API that the scheduler communicates with when it needs to execute DCA swaps using [Jupiter Exchange](https://www.jup.ag/infra)
 - `autodca-client` - A CLI tool to invoke the autodca program instructions without having to manually write any code or clients
 
